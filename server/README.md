@@ -15,3 +15,11 @@ Mem0 provides a REST API server (written using FastAPI). Users can perform all o
 ## Running the server
 
 Follow the instructions in the [docs](https://docs.mem0.ai/open-source/features/rest-api) to run the server.
+
+## Development
+
+The `Makefile` in this directory provides helper commands:
+
+- `make build` - build the API server Docker image.
+- `make run_local` - run the server container locally.
+- `make memgraph-image` - pull the Memgraph image used when experimenting with graph memory.
