@@ -37,7 +37,7 @@ curl -sL https://raw.githubusercontent.com/mem0ai/mem0/main/openmemory/run.sh | 
 
 ## Quickstart
 
-You can run the project using the following two commands:
+You can run the project using the following two commands (the build step also pulls the Memgraph image used for graph memory and `make up` starts a Memgraph container automatically):
 ```bash
 make build # builds the mcp server and ui
 make up  # runs openmemory mcp server and ui
@@ -46,6 +46,7 @@ make up  # runs openmemory mcp server and ui
 After running these commands, you will have:
 - OpenMemory MCP server running at: http://localhost:8765 (API documentation available at http://localhost:8765/docs)
 - OpenMemory UI running at: http://localhost:3000
+- Memgraph running at: bolt://localhost:7687 (for graph memory)
 
 ## Project Structure
 

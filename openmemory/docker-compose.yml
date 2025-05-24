@@ -5,6 +5,11 @@ services:
       - "6333:6333"
     volumes:
       - mem0_storage:/mem0/storage
+  memgraph:
+    image: memgraph/memgraph-mage:latest
+    command: --schema-info-enabled=True
+    ports:
+      - "7687:7687"
   openmemory-mcp:
     image: mem0/openmemory-mcp
     build: api/
@@ -14,6 +19,7 @@ services:
       - api/.env
     depends_on:
       - mem0_store
+      - memgraph
     ports:
       - "8765:8765"
     volumes:
