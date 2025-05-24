@@ -1,4 +1,4 @@
-.PHONY: help up down logs shell migrate upgrade downgrade test test-clean env ui-install ui-start ui-dev ui-build ui-dev-start memgraph-image build
+.PHONY: help up down logs shell migrate upgrade downgrade test test-clean env ui-install ui-start ui-dev ui-build ui-dev-start memgraph-image build jarvis
 
 NEXT_PUBLIC_USER_ID=$(USER)
 NEXT_PUBLIC_API_URL=http://localhost:8765
@@ -53,4 +53,8 @@ downgrade:
 	docker compose exec api alembic downgrade -1
 
 ui-dev:
-	cd ui && NEXT_PUBLIC_USER_ID=$(USER) NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) pnpm install && pnpm dev
+        cd ui && NEXT_PUBLIC_USER_ID=$(USER) NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) pnpm install && pnpm dev
+
+jarvis: memgraph-image
+	cp api/jarvis.env api/.env
+	USER=joe NEXT_PUBLIC_USER_ID=joe NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) docker compose up -d

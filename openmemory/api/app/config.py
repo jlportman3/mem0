@@ -1,4 +1,4 @@
 import os
 
-USER_ID = os.getenv("USER", "default_user")
-DEFAULT_APP_ID = "openmemory"
+USER_ID = "joe"
+DEFAULT_APP_ID = "Jarvis"
