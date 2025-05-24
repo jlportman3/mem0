@@ -53,7 +53,7 @@ downgrade:
 	docker compose exec api alembic downgrade -1
 
 ui-dev:
-        cd ui && NEXT_PUBLIC_USER_ID=$(USER) NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) pnpm install && pnpm dev
+	cd ui && NEXT_PUBLIC_USER_ID=$(USER) NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) pnpm install && pnpm dev
 
 jarvis: memgraph-image
 	cp api/jarvis.env api/.env
