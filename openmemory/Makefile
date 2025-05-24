@@ -1,4 +1,4 @@
-.PHONY: help up down logs shell migrate test test-clean env ui-install ui-start ui-dev ui-build ui-dev-start
+.PHONY: help up down logs shell migrate test test-clean env ui-install ui-start ui-dev ui-build ui-dev-start memgraph-image
 
 NEXT_PUBLIC_USER_ID=$(USER)
 NEXT_PUBLIC_API_URL=http://localhost:8765
@@ -17,14 +17,18 @@ help:
 	@echo "  make ui-install - Install frontend dependencies"
 	@echo "  make ui-start  - Start the frontend development server"
 	@echo "  make ui-dev    - Install dependencies and start the frontend in dev mode"
-	@echo "  make ui        - Install dependencies and start the frontend in production mode"
+        @echo "  make ui        - Install dependencies and start the frontend in production mode"
+        @echo "  make memgraph-image - Pull Memgraph image for graph memory"
 
 env:
 	cd api && cp .env.example .env
 	cd ui && cp .env.example .env
 
-build:
-	docker compose build
+build: memgraph-image
+        docker compose build
+
+memgraph-image:
+        docker pull memgraph/memgraph-mage:latest
 
 up:
 	NEXT_PUBLIC_USER_ID=$(USER) NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL) docker compose up
