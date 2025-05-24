@@ -1,0 +1,6 @@
+# Cline Rules
+
+- Maintain memory-bank documentation as the primary source of project context.
+- Python is used for backend (FastAPI server, library). Avoid introducing new frameworks.
+- Use Docker and Docker Compose for local setup, including Memgraph for graph memory.
+- Tests are written in Python and should be run with `pytest`.
