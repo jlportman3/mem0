@@ -34,7 +34,6 @@ import {
 } from "./memory.types";
 import { parse_vision_messages } from "../utils/memory";
 import { HistoryManager } from "../storage/base";
-import { captureClientEvent } from "../utils/telemetry";
 
 export class Memory {
   private config: MemoryConfig;
@@ -47,7 +46,6 @@ export class Memory {
   private apiVersion: string;
   private graphMemory?: MemoryGraph;
   private enableGraph: boolean;
-  telemetryId: string;
 
   constructor(config: Partial<MemoryConfig> = {}) {
     // Merge and validate config
@@ -88,59 +86,13 @@ export class Memory {
     this.collectionName = this.config.vectorStore.config.collectionName;
     this.apiVersion = this.config.version || "v1.0";
     this.enableGraph = this.config.enableGraph || false;
-    this.telemetryId = "anonymous";
 
     // Initialize graph memory if configured
     if (this.enableGraph && this.config.graphStore) {
       this.graphMemory = new MemoryGraph(this.config);
     }
-
-    // Initialize telemetry if vector store is initialized
-    this._initializeTelemetry();
   }
 
-  private async _initializeTelemetry() {
-    try {
-      await this._getTelemetryId();
-
-      // Capture initialization event
-      await captureClientEvent("init", this, {
-        api_version: this.apiVersion,
-        client_type: "Memory",
-        collection_name: this.collectionName,
-        enable_graph: this.enableGraph,
-      });
-    } catch (error) {}
-  }
-
-  private async _getTelemetryId() {
-    try {
-      if (
-        !this.telemetryId ||
-        this.telemetryId === "anonymous" ||
-        this.telemetryId === "anonymous-supabase"
-      ) {
-        this.telemetryId = await this.vectorStore.getUserId();
-      }
-      return this.telemetryId;
-    } catch (error) {
-      this.telemetryId = "anonymous";
-      return this.telemetryId;
-    }
-  }
-
-  private async _captureEvent(methodName: string, additionalData = {}) {
-    try {
-      await this._getTelemetryId();
-      await captureClientEvent(methodName, this, {
-        ...additionalData,
-        api_version: this.apiVersion,
-        collection_name: this.collectionName,
-      });
-    } catch (error) {
-      console.error(`Failed to capture ${methodName} event:`, error);
-    }
-  }
 
   static fromConfig(configDict: Record<string, any>): Memory {
     try {
@@ -156,12 +108,6 @@ export class Memory {
     messages: string | Message[],
     config: AddMemoryOptions,
   ): Promise<SearchResult> {
-    await this._captureEvent("add", {
-      message_count: Array.isArray(messages) ? messages.length : 1,
-      has_metadata: !!config.metadata,
-      has_filters: !!config.filters,
-      infer: config.infer,
-    });
     const {
       userId,
       agentId,
@@ -416,7 +362,6 @@ export class Memory {
     query: string,
     config: SearchMemoryOptions,
   ): Promise<SearchResult> {
-    await this._captureEvent("search", {
       query_length: query.length,
       limit: config.limit,
       has_filters: !!config.filters,
@@ -482,14 +427,12 @@ export class Memory {
   }
 
   async update(memoryId: string, data: string): Promise<{ message: string }> {
-    await this._captureEvent("update", { memory_id: memoryId });
     const embedding = await this.embedder.embed(data);
     await this.updateMemory(memoryId, data, { [data]: embedding });
     return { message: "Memory updated successfully!" };
   }
 
   async delete(memoryId: string): Promise<{ message: string }> {
-    await this._captureEvent("delete", { memory_id: memoryId });
     await this.deleteMemory(memoryId);
     return { message: "Memory deleted successfully!" };
   }
@@ -497,7 +440,6 @@ export class Memory {
   async deleteAll(
     config: DeleteAllMemoryOptions,
   ): Promise<{ message: string }> {
-    await this._captureEvent("delete_all", {
       has_user_id: !!config.userId,
       has_agent_id: !!config.agentId,
       has_run_id: !!config.runId,
@@ -528,7 +470,6 @@ export class Memory {
   }
 
   async reset(): Promise<void> {
-    await this._captureEvent("reset");
     await this.db.reset();
 
     // Check provider before attempting deleteCol
@@ -568,13 +509,9 @@ export class Memory {
     );
     // Re-init DB if needed (though db.reset() likely handles its state)
     // Re-init Graph if needed
-
-    // Re-initialize telemetry
-    this._initializeTelemetry();
   }
 
   async getAll(config: GetAllMemoryOptions): Promise<SearchResult> {
-    await this._captureEvent("get_all", {
       limit: config.limit,
       has_user_id: !!config.userId,
       has_agent_id: !!config.agentId,
