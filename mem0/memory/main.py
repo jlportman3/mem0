@@ -16,21 +16,13 @@ from pydantic import ValidationError
 
 from mem0.configs.base import MemoryConfig, MemoryItem
 from mem0.configs.enums import MemoryType
-from mem0.configs.prompts import (
-    PROCEDURAL_MEMORY_SYSTEM_PROMPT,
-    get_update_memory_messages,
-)
+from mem0.configs.prompts import (PROCEDURAL_MEMORY_SYSTEM_PROMPT,
+                                  get_update_memory_messages)
 from mem0.memory.base import MemoryBase
 from mem0.memory.setup import mem0_dir, setup_config
 from mem0.memory.storage import SQLiteManager
-from mem0.memory.telemetry import capture_event
-from mem0.memory.utils import (
-    get_fact_retrieval_messages,
-    parse_messages,
-    parse_vision_messages,
-    process_telemetry_filters,
-    remove_code_blocks,
-)
+from mem0.memory.utils import (get_fact_retrieval_messages, parse_messages,
+                               parse_vision_messages, remove_code_blocks)
 from mem0.utils.factory import EmbedderFactory, LlmFactory, VectorStoreFactory
 
 
@@ -150,10 +142,7 @@ class Memory(MemoryBase):
             provider_path = f"migrations_{self.config.vector_store.provider}"
             self.config.vector_store.config.path = os.path.join(mem0_dir, provider_path)
             os.makedirs(self.config.vector_store.config.path, exist_ok=True)
-        self._telemetry_vector_store = VectorStoreFactory.create(
-            self.config.vector_store.provider, self.config.vector_store.config
-        )
-        capture_event("mem0.init", self, {"sync_type": "sync"})
+        VectorStoreFactory.create(self.config.vector_store.provider, self.config.vector_store.config)
 
     @classmethod
     def from_config(cls, config_dict: Dict[str, Any]):
@@ -338,7 +327,7 @@ class Memory(MemoryBase):
         except Exception as e:
             logging.error(f"Error in new_retrieved_facts: {e}")
             new_retrieved_facts = []
-        
+
         if not new_retrieved_facts:
             logger.debug("No new facts retrieved from input. Skipping memory update LLM call.")
 
@@ -440,12 +429,6 @@ class Memory(MemoryBase):
         except Exception as e:
             logging.error(f"Error iterating new_memories_with_actions: {e}")
 
-        keys, encoded_ids = process_telemetry_filters(filters)
-        capture_event(
-            "mem0.add",
-            self,
-            {"version": self.api_version, "keys": keys, "encoded_ids": encoded_ids, "sync_type": "sync"},
-        )
         return returned_memories
 
     def _add_to_graph(self, messages, filters):
@@ -469,7 +452,6 @@ class Memory(MemoryBase):
         Returns:
             dict: Retrieved memory.
         """
-        capture_event("mem0.get", self, {"memory_id": memory_id, "sync_type": "sync"})
         memory = self.vector_store.get(vector_id=memory_id)
         if not memory:
             return None
@@ -536,11 +518,6 @@ class Memory(MemoryBase):
 
         if not any(key in effective_filters for key in ("user_id", "agent_id", "run_id")):
             raise ValueError("At least one of 'user_id', 'agent_id', or 'run_id' must be specified.")
-
-        keys, encoded_ids = process_telemetry_filters(effective_filters)
-        capture_event(
-            "mem0.get_all", self, {"limit": limit, "keys": keys, "encoded_ids": encoded_ids, "sync_type": "sync"}
-        )
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_memories = executor.submit(self._get_all_from_vector_store, effective_filters, limit)
@@ -643,20 +620,6 @@ class Memory(MemoryBase):
         if not any(key in effective_filters for key in ("user_id", "agent_id", "run_id")):
             raise ValueError("At least one of 'user_id', 'agent_id', or 'run_id' must be specified.")
 
-        keys, encoded_ids = process_telemetry_filters(effective_filters)
-        capture_event(
-            "mem0.search",
-            self,
-            {
-                "limit": limit,
-                "version": self.api_version,
-                "keys": keys,
-                "encoded_ids": encoded_ids,
-                "sync_type": "sync",
-                "threshold": threshold,
-            },
-        )
-
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_memories = executor.submit(self._search_vector_store, query, effective_filters, limit, threshold)
             future_graph_entities = (
@@ -734,7 +697,6 @@ class Memory(MemoryBase):
         Returns:
             dict: Updated memory.
         """
-        capture_event("mem0.update", self, {"memory_id": memory_id, "sync_type": "sync"})
 
         existing_embeddings = {data: self.embedding_model.embed(data, "update")}
 
@@ -748,7 +710,6 @@ class Memory(MemoryBase):
         Args:
             memory_id (str): ID of the memory to delete.
         """
-        capture_event("mem0.delete", self, {"memory_id": memory_id, "sync_type": "sync"})
         self._delete_memory(memory_id)
         return {"message": "Memory deleted successfully!"}
 
@@ -774,8 +735,6 @@ class Memory(MemoryBase):
                 "At least one filter is required to delete all memories. If you want to delete all memories, use the `reset()` method."
             )
 
-        keys, encoded_ids = process_telemetry_filters(filters)
-        capture_event("mem0.delete_all", self, {"keys": keys, "encoded_ids": encoded_ids, "sync_type": "sync"})
         memories = self.vector_store.list(filters=filters)[0]
         for memory in memories:
             self._delete_memory(memory.id)
@@ -797,7 +756,6 @@ class Memory(MemoryBase):
         Returns:
             list: List of changes for the memory.
         """
-        capture_event("mem0.history", self, {"memory_id": memory_id, "sync_type": "sync"})
         return self.db.get_history(memory_id)
 
     def _create_memory(self, data, existing_embeddings, metadata=None):
@@ -826,7 +784,6 @@ class Memory(MemoryBase):
             actor_id=metadata.get("actor_id"),
             role=metadata.get("role"),
         )
-        capture_event("mem0._create_memory", self, {"memory_id": memory_id, "sync_type": "sync"})
         return memory_id
 
     def _create_procedural_memory(self, messages, metadata=None, prompt=None):
@@ -861,7 +818,6 @@ class Memory(MemoryBase):
         metadata["memory_type"] = MemoryType.PROCEDURAL.value
         embeddings = self.embedding_model.embed(procedural_memory, memory_action="add")
         memory_id = self._create_memory(procedural_memory, {procedural_memory: embeddings}, metadata=metadata)
-        capture_event("mem0._create_procedural_memory", self, {"memory_id": memory_id, "sync_type": "sync"})
 
         result = {"results": [{"id": memory_id, "memory": procedural_memory, "event": "ADD"}]}
 
@@ -918,7 +874,6 @@ class Memory(MemoryBase):
             actor_id=new_metadata.get("actor_id"),
             role=new_metadata.get("role"),
         )
-        capture_event("mem0._update_memory", self, {"memory_id": memory_id, "sync_type": "sync"})
         return memory_id
 
     def _delete_memory(self, memory_id):
@@ -935,7 +890,6 @@ class Memory(MemoryBase):
             role=existing_memory.payload.get("role"),
             is_deleted=1,
         )
-        capture_event("mem0._delete_memory", self, {"memory_id": memory_id, "sync_type": "sync"})
         return memory_id
 
     def reset(self):
@@ -961,7 +915,6 @@ class Memory(MemoryBase):
             self.vector_store = VectorStoreFactory.create(
                 self.config.vector_store.provider, self.config.vector_store.config
             )
-        capture_event("mem0.reset", self, {"sync_type": "sync"})
 
     def chat(self, query):
         raise NotImplementedError("Chat function not implemented yet.")
@@ -993,8 +946,6 @@ class AsyncMemory(MemoryBase):
             self.enable_graph = True
         else:
             self.graph = None
-
-        capture_event("mem0.init", self, {"sync_type": "async"})
 
     @classmethod
     async def from_config(cls, config_dict: Dict[str, Any]):
@@ -1166,7 +1117,7 @@ class AsyncMemory(MemoryBase):
         except Exception as e:
             logging.error(f"Error in new_retrieved_facts: {e}")
             new_retrieved_facts = []
-        
+
         if not new_retrieved_facts:
             logger.debug("No new facts retrieved from input. Skipping memory update LLM call.")
 
@@ -1279,12 +1230,6 @@ class AsyncMemory(MemoryBase):
         except Exception as e:
             logging.error(f"Error in memory processing loop (async): {e}")
 
-        keys, encoded_ids = process_telemetry_filters(effective_filters)
-        capture_event(
-            "mem0.add",
-            self,
-            {"version": self.api_version, "keys": keys, "encoded_ids": encoded_ids, "sync_type": "async"},
-        )
         return returned_memories
 
     async def _add_to_graph(self, messages, filters):
@@ -1308,7 +1253,6 @@ class AsyncMemory(MemoryBase):
         Returns:
             dict: Retrieved memory.
         """
-        capture_event("mem0.get", self, {"memory_id": memory_id, "sync_type": "async"})
         memory = await asyncio.to_thread(self.vector_store.get, vector_id=memory_id)
         if not memory:
             return None
@@ -1378,11 +1322,6 @@ class AsyncMemory(MemoryBase):
                 "When 'conversation_id' is not provided (classic mode), "
                 "at least one of 'user_id', 'agent_id', or 'run_id' must be specified for get_all."
             )
-
-        keys, encoded_ids = process_telemetry_filters(effective_filters)
-        capture_event(
-            "mem0.get_all", self, {"limit": limit, "keys": keys, "encoded_ids": encoded_ids, "sync_type": "async"}
-        )
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_memories = executor.submit(self._get_all_from_vector_store, effective_filters, limit)
@@ -1486,20 +1425,6 @@ class AsyncMemory(MemoryBase):
         if not any(key in effective_filters for key in ("user_id", "agent_id", "run_id")):
             raise ValueError("at least one of 'user_id', 'agent_id', or 'run_id' must be specified ")
 
-        keys, encoded_ids = process_telemetry_filters(effective_filters)
-        capture_event(
-            "mem0.search",
-            self,
-            {
-                "limit": limit,
-                "version": self.api_version,
-                "keys": keys,
-                "encoded_ids": encoded_ids,
-                "sync_type": "async",
-                "threshold": threshold,
-            },
-        )
-
         vector_store_task = asyncio.create_task(self._search_vector_store(query, effective_filters, limit, threshold))
 
         graph_task = None
@@ -1581,7 +1506,6 @@ class AsyncMemory(MemoryBase):
         Returns:
             dict: Updated memory.
         """
-        capture_event("mem0.update", self, {"memory_id": memory_id, "sync_type": "async"})
 
         embeddings = await asyncio.to_thread(self.embedding_model.embed, data, "update")
         existing_embeddings = {data: embeddings}
@@ -1596,7 +1520,6 @@ class AsyncMemory(MemoryBase):
         Args:
             memory_id (str): ID of the memory to delete.
         """
-        capture_event("mem0.delete", self, {"memory_id": memory_id, "sync_type": "async"})
         await self._delete_memory(memory_id)
         return {"message": "Memory deleted successfully!"}
 
@@ -1622,8 +1545,6 @@ class AsyncMemory(MemoryBase):
                 "At least one filter is required to delete all memories. If you want to delete all memories, use the `reset()` method."
             )
 
-        keys, encoded_ids = process_telemetry_filters(filters)
-        capture_event("mem0.delete_all", self, {"keys": keys, "encoded_ids": encoded_ids, "sync_type": "async"})
         memories = await asyncio.to_thread(self.vector_store.list, filters=filters)
 
         delete_tasks = []
@@ -1649,7 +1570,6 @@ class AsyncMemory(MemoryBase):
         Returns:
             list: List of changes for the memory.
         """
-        capture_event("mem0.history", self, {"memory_id": memory_id, "sync_type": "async"})
         return await asyncio.to_thread(self.db.get_history, memory_id)
 
     async def _create_memory(self, data, existing_embeddings, metadata=None):
@@ -1683,7 +1603,6 @@ class AsyncMemory(MemoryBase):
             role=metadata.get("role"),
         )
 
-        capture_event("mem0._create_memory", self, {"memory_id": memory_id, "sync_type": "async"})
         return memory_id
 
     async def _create_procedural_memory(self, messages, metadata=None, llm=None, prompt=None):
@@ -1697,9 +1616,8 @@ class AsyncMemory(MemoryBase):
             prompt (str, optional): Prompt to use for the procedural memory creation. Defaults to None.
         """
         try:
-            from langchain_core.messages.utils import (
-                convert_to_messages,  # type: ignore
-            )
+            from langchain_core.messages.utils import \
+                convert_to_messages  # type: ignore
         except Exception:
             logger.error(
                 "Import error while loading langchain-core. Please install 'langchain-core' to use procedural memory."
@@ -1731,7 +1649,6 @@ class AsyncMemory(MemoryBase):
         metadata["memory_type"] = MemoryType.PROCEDURAL.value
         embeddings = await asyncio.to_thread(self.embedding_model.embed, procedural_memory, memory_action="add")
         memory_id = await self._create_memory(procedural_memory, {procedural_memory: embeddings}, metadata=metadata)
-        capture_event("mem0._create_procedural_memory", self, {"memory_id": memory_id, "sync_type": "async"})
 
         result = {"results": [{"id": memory_id, "memory": procedural_memory, "event": "ADD"}]}
 
@@ -1791,7 +1708,6 @@ class AsyncMemory(MemoryBase):
             actor_id=new_metadata.get("actor_id"),
             role=new_metadata.get("role"),
         )
-        capture_event("mem0._update_memory", self, {"memory_id": memory_id, "sync_type": "async"})
         return memory_id
 
     async def _delete_memory(self, memory_id):
@@ -1811,7 +1727,6 @@ class AsyncMemory(MemoryBase):
             is_deleted=1,
         )
 
-        capture_event("mem0._delete_memory", self, {"memory_id": memory_id, "sync_type": "async"})
         return memory_id
 
     async def reset(self):
@@ -1838,7 +1753,6 @@ class AsyncMemory(MemoryBase):
         self.vector_store = VectorStoreFactory.create(
             self.config.vector_store.provider, self.config.vector_store.config
         )
-        capture_event("mem0.reset", self, {"sync_type": "async"})
 
     async def chat(self, query):
         raise NotImplementedError("Chat function not implemented yet.")
