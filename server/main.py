@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
 from mem0 import Memory
+from mem0.proxy.main import Mem0 as Mem0Proxy
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -15,48 +16,41 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 load_dotenv()
 
 
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
-POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
-
-NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
-NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME", "neo4j")
-NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "mem0graph")
-
-MEMGRAPH_URI = os.environ.get("MEMGRAPH_URI", "bolt://localhost:7687")
+MEMGRAPH_URI = os.environ.get("MEMGRAPH_URI", "bolt://memgraph:7687")
 MEMGRAPH_USERNAME = os.environ.get("MEMGRAPH_USERNAME", "memgraph")
-MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD", "mem0graph")
+MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD", "memgraph")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+CHAT_API_KEY = os.environ.get("CHAT_API_KEY", OPENAI_API_KEY)
+CHAT_API_BASE = os.environ.get("CHAT_API_BASE", "https://api.openai.com/v1")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "gpt-4o")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
 DEFAULT_CONFIG = {
     "version": "v1.1",
     "vector_store": {
-        "provider": "pgvector",
-        "config": {
-            "host": POSTGRES_HOST,
-            "port": int(POSTGRES_PORT),
-            "dbname": POSTGRES_DB,
-            "user": POSTGRES_USER,
-            "password": POSTGRES_PASSWORD,
-            "collection_name": POSTGRES_COLLECTION_NAME,
-        },
+        "provider": "qdrant",
+        "config": {"path": "/data/qdrant", "on_disk": True},
     },
     "graph_store": {
-        "provider": "neo4j",
-        "config": {"url": NEO4J_URI, "username": NEO4J_USERNAME, "password": NEO4J_PASSWORD},
+        "provider": "memgraph",
+        "config": {"url": MEMGRAPH_URI, "username": MEMGRAPH_USERNAME, "password": MEMGRAPH_PASSWORD},
     },
     "llm": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": "gpt-4o"}},
-    "embedder": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "model": "text-embedding-3-small"}},
+    "embedder": {
+        "provider": "huggingface",
+        "config": {
+            "model": "/models/bge-large-en-v1.5",
+            "model_kwargs": {"device": "cuda:0"},
+        },
+    },
     "history_db_path": HISTORY_DB_PATH,
 }
 
 
-MEMORY_INSTANCE = Memory.from_config(DEFAULT_CONFIG)
+MEM0_PROXY = Mem0Proxy(config=DEFAULT_CONFIG)
+MEMORY_INSTANCE = MEM0_PROXY.mem0_client
+CHAT = MEM0_PROXY.chat
 
 app = FastAPI(
     title="Mem0 REST APIs",
@@ -86,12 +80,19 @@ class SearchRequest(BaseModel):
     filters: Optional[Dict[str, Any]] = None
 
 
-@app.post("/configure", summary="Configure Mem0")
-def set_config(config: Dict[str, Any]):
-    """Set memory configuration."""
-    global MEMORY_INSTANCE
-    MEMORY_INSTANCE = Memory.from_config(config)
-    return {"message": "Configuration set successfully"}
+class ChatCompletionRequest(BaseModel):
+    model: Optional[str] = None
+    messages: List[Dict[str, Any]]
+    user_id: Optional[str] = None
+    agent_id: Optional[str] = None
+    run_id: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+    filters: Optional[Dict[str, Any]] = None
+    limit: Optional[int] = 10
+
+    model_config = {"extra": "allow"}
+
+
 
 
 @app.post("/memories", summary="Create memories")
@@ -146,6 +147,24 @@ def search_memories(search_req: SearchRequest):
         return MEMORY_INSTANCE.search(query=search_req.query, **params)
     except Exception as e:
         logging.exception("Error in search_memories:")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/v1/chat/completions", summary="OpenAI compatible chat endpoint")
+def chat_completions(req: ChatCompletionRequest):
+    params = req.model_dump()
+    model = params.pop("model") or CHAT_MODEL
+    messages = params.pop("messages")
+    try:
+        return CHAT.completions.create(
+            model=model,
+            messages=messages,
+            base_url=CHAT_API_BASE,
+            api_key=CHAT_API_KEY,
+            **params,
+        )
+    except Exception as e:
+        logging.exception("Error in chat_completions:")
         raise HTTPException(status_code=500, detail=str(e))
 
 

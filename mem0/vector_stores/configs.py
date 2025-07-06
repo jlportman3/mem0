@@ -5,29 +5,13 @@ from pydantic import BaseModel, Field, model_validator
 
 class VectorStoreConfig(BaseModel):
     provider: str = Field(
-        description="Provider of the vector store (e.g., 'qdrant', 'chroma', 'upstash_vector')",
+        description="Provider of the vector store (must be 'qdrant')",
         default="qdrant",
     )
-    config: Optional[Dict] = Field(description="Configuration for the specific vector store", default=None)
+    config: Optional[Dict] = Field(description="Configuration for the vector store", default=None)
 
     _provider_configs: Dict[str, str] = {
         "qdrant": "QdrantConfig",
-        "chroma": "ChromaDbConfig",
-        "pgvector": "PGVectorConfig",
-        "pinecone": "PineconeConfig",
-        "mongodb": "MongoDBConfig",
-        "milvus": "MilvusDBConfig",
-        "baidu": "BaiduDBConfig",
-        "upstash_vector": "UpstashVectorConfig",
-        "azure_ai_search": "AzureAISearchConfig",
-        "redis": "RedisDBConfig",
-        "elasticsearch": "ElasticsearchConfig",
-        "vertex_ai_vector_search": "GoogleMatchingEngineConfig",
-        "opensearch": "OpenSearchConfig",
-        "supabase": "SupabaseConfig",
-        "weaviate": "WeaviateConfig",
-        "faiss": "FAISSConfig",
-        "langchain": "LangchainConfig",
     }
 
     @model_validator(mode="after")
@@ -35,8 +19,8 @@ class VectorStoreConfig(BaseModel):
         provider = self.provider
         config = self.config
 
-        if provider not in self._provider_configs:
-            raise ValueError(f"Unsupported vector store provider: {provider}")
+        if provider != "qdrant":
+            raise ValueError("Vector store provider is fixed to 'qdrant'")
 
         module = __import__(
             f"mem0.configs.vector_stores.{provider}",

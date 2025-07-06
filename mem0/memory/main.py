@@ -21,9 +21,18 @@ from mem0.configs.prompts import (PROCEDURAL_MEMORY_SYSTEM_PROMPT,
 from mem0.memory.base import MemoryBase
 from mem0.memory.setup import mem0_dir, setup_config
 from mem0.memory.storage import SQLiteManager
-from mem0.memory.utils import (get_fact_retrieval_messages, parse_messages,
-                               parse_vision_messages, remove_code_blocks)
+from mem0.memory.utils import (
+    get_fact_retrieval_messages,
+    parse_messages,
+    parse_vision_messages,
+    remove_code_blocks,
+)
 from mem0.utils.factory import EmbedderFactory, LlmFactory, VectorStoreFactory
+
+
+def capture_event(event_name: str, data: Optional[dict] = None) -> None:
+    """Placeholder telemetry hook used in tests."""
+    logging.debug("capture_event %s: %s", event_name, data)
 
 
 def _build_filters_and_metadata(
@@ -197,10 +206,11 @@ class Memory(MemoryBase):
             infer (bool, optional): If True (default), an LLM is used to extract key facts from
                 'messages' and decide whether to add, update, or delete related memories.
                 If False, 'messages' are added as raw memories directly.
-            memory_type (str, optional): Specifies the type of memory. Currently, only
-                `MemoryType.PROCEDURAL.value` ("procedural_memory") is explicitly handled for
-                creating procedural memories (typically requires 'agent_id'). Otherwise, memories
-                are treated as general conversational/factual memories.memory_type (str, optional): Type of memory to create. Defaults to None. By default, it creates the short term memories and long term (semantic and episodic) memories. Pass "procedural_memory" to create procedural memories.
+            memory_type (str, optional): Specifies the type of memory to store.
+                Supported types include short-, medium-, long-term, semantic,
+                episodic and procedural memories. Procedural memories typically
+                require an ``agent_id``. If ``None`` (default), ``short_term_memory``
+                is used.
             prompt (str, optional): Prompt to use for the memory creation. Defaults to None.
 
 
@@ -218,9 +228,13 @@ class Memory(MemoryBase):
             input_metadata=metadata,
         )
 
-        if memory_type is not None and memory_type != MemoryType.PROCEDURAL.value:
+        if memory_type is None:
+            memory_type = MemoryType.SHORT_TERM.value
+        elif memory_type not in {
+            m.value for m in MemoryType
+        }:
             raise ValueError(
-                f"Invalid 'memory_type'. Please pass {MemoryType.PROCEDURAL.value} to create procedural memories."
+                f"Invalid 'memory_type'. Must be one of {[m.value for m in MemoryType]}"
             )
 
         if isinstance(messages, str):
@@ -285,6 +299,7 @@ class Memory(MemoryBase):
 
                 per_msg_meta = deepcopy(metadata)
                 per_msg_meta["role"] = message_dict["role"]
+                per_msg_meta["memory_type"] = memory_type
 
                 actor_name = message_dict.get("name")
                 if actor_name:
@@ -326,6 +341,7 @@ class Memory(MemoryBase):
             new_retrieved_facts = json.loads(response)["facts"]
         except Exception as e:
             logging.error(f"Error in new_retrieved_facts: {e}")
+            capture_event("error", {"stage": "fact_extraction", "error": str(e)})
             new_retrieved_facts = []
 
         if not new_retrieved_facts:
@@ -369,6 +385,7 @@ class Memory(MemoryBase):
                 )
             except Exception as e:
                 logging.error(f"Error in new memory actions response: {e}")
+                capture_event("error", {"stage": "memory_actions", "error": str(e)})
                 response = ""
 
             try:
@@ -376,6 +393,7 @@ class Memory(MemoryBase):
                 new_memories_with_actions = json.loads(response)
             except Exception as e:
                 logging.error(f"Invalid JSON response: {e}")
+                capture_event("error", {"stage": "memory_actions", "error": str(e)})
                 new_memories_with_actions = {}
         else:
             new_memories_with_actions = {}
@@ -766,6 +784,7 @@ class Memory(MemoryBase):
             embeddings = self.embedding_model.embed(data, memory_action="add")
         memory_id = str(uuid.uuid4())
         metadata = metadata or {}
+        metadata.setdefault("memory_type", MemoryType.SHORT_TERM.value)
         metadata["data"] = data
         metadata["hash"] = hashlib.md5(data.encode()).hexdigest()
         metadata["created_at"] = datetime.now(pytz.timezone("US/Pacific")).isoformat()
@@ -995,8 +1014,11 @@ class AsyncMemory(MemoryBase):
             run_id (str, optional): ID of the run creating the memory. Defaults to None.
             metadata (dict, optional): Metadata to store with the memory. Defaults to None.
             infer (bool, optional): Whether to infer the memories. Defaults to True.
-            memory_type (str, optional): Type of memory to create. Defaults to None.
-                                         Pass "procedural_memory" to create procedural memories.
+            memory_type (str, optional): Type of memory to create. Supported
+                values are ``short_term_memory``, ``medium_term_memory``,
+                ``long_term_memory``, ``semantic_memory``, ``episodic_memory``
+                and ``procedural_memory``. If ``None`` (default),
+                ``short_term_memory`` is used.
             prompt (str, optional): Prompt to use for the memory creation. Defaults to None.
             llm (BaseChatModel, optional): LLM class to use for generating procedural memories. Defaults to None. Useful when user is using LangChain ChatModel.
         Returns:
@@ -1006,9 +1028,11 @@ class AsyncMemory(MemoryBase):
             user_id=user_id, agent_id=agent_id, run_id=run_id, input_metadata=metadata
         )
 
-        if memory_type is not None and memory_type != MemoryType.PROCEDURAL.value:
+        if memory_type is None:
+            memory_type = MemoryType.SHORT_TERM.value
+        elif memory_type not in {m.value for m in MemoryType}:
             raise ValueError(
-                f"Invalid 'memory_type'. Please pass {MemoryType.PROCEDURAL.value} to create procedural memories."
+                f"Invalid 'memory_type'. Must be one of {[m.value for m in MemoryType]}"
             )
 
         if isinstance(messages, str):
@@ -1079,6 +1103,7 @@ class AsyncMemory(MemoryBase):
 
                 per_msg_meta = deepcopy(metadata)
                 per_msg_meta["role"] = message_dict["role"]
+                per_msg_meta["memory_type"] = memory_type
 
                 actor_name = message_dict.get("name")
                 if actor_name:
@@ -1116,6 +1141,7 @@ class AsyncMemory(MemoryBase):
             new_retrieved_facts = json.loads(response)["facts"]
         except Exception as e:
             logging.error(f"Error in new_retrieved_facts: {e}")
+            capture_event("error", {"stage": "fact_extraction", "error": str(e)})
             new_retrieved_facts = []
 
         if not new_retrieved_facts:
@@ -1163,12 +1189,14 @@ class AsyncMemory(MemoryBase):
                 )
             except Exception as e:
                 logging.error(f"Error in new memory actions response: {e}")
+                capture_event("error", {"stage": "memory_actions", "error": str(e)})
                 response = ""
             try:
                 response = remove_code_blocks(response)
                 new_memories_with_actions = json.loads(response)
             except Exception as e:
                 logging.error(f"Invalid JSON response: {e}")
+                capture_event("error", {"stage": "memory_actions", "error": str(e)})
                 new_memories_with_actions = {}
 
         returned_memories = []
@@ -1581,6 +1609,7 @@ class AsyncMemory(MemoryBase):
 
         memory_id = str(uuid.uuid4())
         metadata = metadata or {}
+        metadata.setdefault("memory_type", MemoryType.SHORT_TERM.value)
         metadata["data"] = data
         metadata["hash"] = hashlib.md5(data.encode()).hexdigest()
         metadata["created_at"] = datetime.now(pytz.timezone("US/Pacific")).isoformat()
