@@ -42,8 +42,8 @@ class MemgraphConfig(BaseModel):
 
 
 class GraphStoreConfig(BaseModel):
-    provider: str = Field(description="Provider of the data store (e.g., 'neo4j')", default="neo4j")
-    config: Neo4jConfig = Field(description="Configuration for the specific data store", default=None)
+    provider: str = Field(description="Provider of the data store (must be 'memgraph')", default="memgraph")
+    config: MemgraphConfig = Field(description="Configuration for the graph store", default=None)
     llm: Optional[LlmConfig] = Field(description="LLM configuration for querying the graph store", default=None)
     custom_prompt: Optional[str] = Field(
         description="Custom prompt to fetch entities from the given text", default=None
@@ -52,9 +52,6 @@ class GraphStoreConfig(BaseModel):
     @field_validator("config")
     def validate_config(cls, v, values):
         provider = values.data.get("provider")
-        if provider == "neo4j":
-            return Neo4jConfig(**v.model_dump())
-        elif provider == "memgraph":
-            return MemgraphConfig(**v.model_dump())
-        else:
-            raise ValueError(f"Unsupported graph store provider: {provider}")
+        if provider != "memgraph":
+            raise ValueError("Graph store provider is fixed to 'memgraph'")
+        return MemgraphConfig(**v.model_dump())

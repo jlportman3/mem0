@@ -24,6 +24,7 @@ except ImportError:
         sys.exit(1)
 
 from mem0 import Memory, MemoryClient
+from mem0.configs.enums import MemoryType
 from mem0.configs.prompts import MEMORY_ANSWER_PROMPT
 
 logger = logging.getLogger(__name__)
@@ -143,6 +144,20 @@ class Completions:
             model_list=model_list,
         )
 
+        if not stream:
+            try:
+                assistant_msg = response.choices[0].message
+            except AttributeError:
+                assistant_msg = response["choices"][0]["message"]
+            self._async_add_to_memory(
+                [assistant_msg],
+                user_id=user_id,
+                agent_id=agent_id,
+                run_id=run_id,
+                metadata=metadata,
+                filters=filters,
+            )
+
         return response
 
     def _prepare_messages(self, messages: List[dict]) -> List[dict]:
@@ -160,6 +175,7 @@ class Completions:
                 run_id=run_id,
                 metadata=metadata,
                 filters=filters,
+                memory_type=MemoryType.SHORT_TERM.value,
             )
 
         threading.Thread(target=add_task, daemon=True).start()
