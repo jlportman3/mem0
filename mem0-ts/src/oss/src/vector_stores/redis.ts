@@ -142,7 +142,7 @@ export class RedisDB implements VectorStore {
 
   constructor(config: RedisConfig) {
     this.indexName = config.collectionName;
-    this.indexPrefix = `mem0:${config.collectionName}`;
+    this.indexPrefix = `jmemory:${config.collectionName}`;
 
     this.schema = {
       index: {

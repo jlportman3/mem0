@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Assistant powered by Mem0",
+  "name": "YouTube Assistant powered by Jmemory",
   "version": "1.0",
-  "description": "An AI-powered YouTube assistant with memory capabilities from Mem0",
+  "description": "An AI-powered YouTube assistant with memory capabilities from Jmemory",
   "permissions": [
     "activeTab",
     "storage",
@@ -11,7 +11,7 @@
   "host_permissions": [
     "https://*.youtube.com/*",
     "https://*.openai.com/*",
-    "https://*.mem0.ai/*"
+    "https://*.jmemory.ai/*"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'",

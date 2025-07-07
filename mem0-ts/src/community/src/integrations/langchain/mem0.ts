@@ -1,5 +1,5 @@
-import { MemoryClient } from "mem0ai";
-import type { Memory, MemoryOptions, SearchOptions } from "mem0ai";
+import { MemoryClient } from "jmemoryai";
+import type { Memory, MemoryOptions, SearchOptions } from "jmemoryai";
 
 import {
   InputValues,
@@ -26,7 +26,7 @@ import {
  * @param memory Array of Memory objects from mem0ai
  * @returns Formatted system prompt string
  */
-export const mem0MemoryContextToSystemPrompt = (memory: Memory[]): string => {
+export const jmemoryMemoryContextToSystemPrompt = (memory: Memory[]): string => {
   if (!memory || !Array.isArray(memory)) {
     return "";
   }
@@ -42,12 +42,12 @@ export const mem0MemoryContextToSystemPrompt = (memory: Memory[]): string => {
  * @param memory Array of Memory objects from mem0ai
  * @returns HumanMessage containing formatted memory context
  */
-export const condenseMem0MemoryIntoHumanMessage = (
+export const condenseJmemoryMemoryIntoHumanMessage = (
   memory: Memory[],
 ): HumanMessage => {
   const basePrompt =
     "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The MEMORIES of the USER are: \n\n";
-  const systemPrompt = mem0MemoryContextToSystemPrompt(memory);
+  const systemPrompt = jmemoryMemoryContextToSystemPrompt(memory);
 
   return new HumanMessage(`${basePrompt}\n${systemPrompt}`);
 };
@@ -57,7 +57,7 @@ export const condenseMem0MemoryIntoHumanMessage = (
  * @param memories Array of Memory objects from mem0ai
  * @returns Array of BaseMessage objects
  */
-export const mem0MemoryToMessages = (memories: Memory[]): BaseMessage[] => {
+export const jmemoryMemoryToMessages = (memories: Memory[]): BaseMessage[] => {
   if (!memories || !Array.isArray(memories)) {
     return [];
   }
@@ -112,13 +112,13 @@ export interface ClientOptions {
  * Interface defining the structure of the input data for the Mem0Memory
  * class. It includes properties like memoryKey, sessionId, and apiKey.
  */
-export interface Mem0MemoryInput extends BaseChatMemoryInput {
+export interface JmemoryMemoryInput extends BaseChatMemoryInput {
   sessionId: string;
   apiKey: string;
   humanPrefix?: string;
   aiPrefix?: string;
   memoryOptions?: MemoryOptions | SearchOptions;
-  mem0Options?: ClientOptions;
+  jmemoryOptions?: ClientOptions;
   separateMessages?: boolean;
 }
 
@@ -147,7 +147,7 @@ export interface Mem0MemoryInput extends BaseChatMemoryInput {
  * const chain = new ConversationChain({ llm: model, memory });
  * ```
  */
-export class Mem0Memory extends BaseChatMemory implements Mem0MemoryInput {
+export class JmemoryMemory extends BaseChatMemory implements JmemoryMemoryInput {
   memoryKey = "history";
 
   apiKey: string;
@@ -187,12 +187,12 @@ export class Mem0Memory extends BaseChatMemory implements Mem0MemoryInput {
     this.humanPrefix = fields.humanPrefix ?? this.humanPrefix;
     this.aiPrefix = fields.aiPrefix ?? this.aiPrefix;
     this.memoryOptions = fields.memoryOptions ?? {};
-    this.mem0Options = fields.mem0Options ?? {
+    this.jmemoryOptions = fields.mem0Options ?? {
       apiKey: this.apiKey,
     };
     this.separateMessages = fields.separateMessages ?? false;
     try {
-      this.mem0Client = new MemoryClient({
+      this.jmemoryClient = new MemoryClient({
         ...this.mem0Options,
         apiKey: this.apiKey,
       });
@@ -239,8 +239,8 @@ export class Mem0Memory extends BaseChatMemory implements Mem0MemoryInput {
     if (this.returnMessages) {
       return {
         [this.memoryKey]: this.separateMessages
-          ? mem0MemoryToMessages(memories)
-          : [condenseMem0MemoryIntoHumanMessage(memories)],
+          ? jmemoryMemoryToMessages(memories)
+          : [condenseJmemoryMemoryIntoHumanMessage(memories)],
       };
     }
 

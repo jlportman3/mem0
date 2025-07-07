@@ -1,5 +1,5 @@
 import { LanguageModelV1, LanguageModelV1CallOptions } from "ai";
-import { Mem0ProviderSettings } from "./mem0-provider";
+import { JmemoryProviderSettings } from "./jmemory-provider";
 import { createOpenAI, OpenAIProviderSettings } from "@ai-sdk/openai";
 import { CohereProviderSettings, createCohere } from "@ai-sdk/cohere";
 import { AnthropicProviderSettings, createAnthropic } from "@ai-sdk/anthropic";
@@ -7,12 +7,12 @@ import { createGoogleGenerativeAI, GoogleGenerativeAIProviderSettings } from "@a
 import { createGroq, GroqProviderSettings } from "@ai-sdk/groq";
 
 // Define a private provider field
-class Mem0AITextGenerator implements LanguageModelV1 {
+class JmemoryAITextGenerator implements LanguageModelV1 {
     readonly specificationVersion = "v1";
     readonly defaultObjectGenerationMode = "json";
     readonly supportsImageUrls = false;
     readonly modelId: string;
-    readonly provider = "mem0";
+    readonly provider = "jmemory";
 
     private languageModel: any; // Use any type to avoid version conflicts
 
@@ -79,4 +79,4 @@ class Mem0AITextGenerator implements LanguageModelV1 {
 }
 
 export type ProviderSettings = OpenAIProviderSettings | CohereProviderSettings | AnthropicProviderSettings | GroqProviderSettings | GoogleGenerativeAIProviderSettings;
-export default Mem0AITextGenerator;
+export default JmemoryAITextGenerator;

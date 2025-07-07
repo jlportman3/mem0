@@ -1,9 +1,9 @@
-# Mem0 AI SDK Provider
+# Jmemory AI SDK Provider
 
-The **Mem0 AI SDK Provider** is a community-maintained library developed by [Mem0](https://mem0.ai/) to integrate with the Vercel AI SDK. This library brings enhanced AI interaction capabilities to your applications by introducing persistent memory functionality. With Mem0, language model conversations gain memory, enabling more contextualized and personalized responses based on past interactions.
+The **Jmemory AI SDK Provider** is a community-maintained library developed by [Jmemory](https://jmemory.ai/) to integrate with the Vercel AI SDK. This library brings enhanced AI interaction capabilities to your applications by introducing persistent memory functionality. With Jmemory, language model conversations gain memory, enabling more contextualized and personalized responses based on past interactions.
 
-Discover more of **Mem0** on [GitHub](https://github.com/mem0ai).
-Explore the [Mem0 Documentation](https://docs.mem0.ai/overview) to gain deeper control and flexibility in managing your memories.
+Discover more of **Jmemory** on [GitHub](https://github.com/jmemoryai).
+Explore the [Jmemory Documentation](https://docs.jmemory.ai/overview) to gain deeper control and flexibility in managing your memories.
 
 For detailed information on using the Vercel AI SDK, refer to Vercel’s [API Reference](https://sdk.vercel.ai/docs/reference) and [Documentation](https://sdk.vercel.ai/docs).
 
@@ -19,23 +19,23 @@ For detailed information on using the Vercel AI SDK, refer to Vercel’s [API Re
 ## Installation
 
 ```bash
-npm install @mem0/vercel-ai-provider
+npm install @jmemory/vercel-ai-provider
 ```
 
 ## Before We Begin
 
-### Setting Up Mem0
+### Setting Up Jmemory
 
-1. Obtain your [Mem0 API Key](https://app.mem0.ai/dashboard/api-keys) from the Mem0 dashboard.
+1. Obtain your [Jmemory API Key](https://app.jmemory.ai/dashboard/api-keys) from the Jmemory dashboard.
 
 2. Initialize the Mem0 Client:
 
 ```typescript
-import { createMem0 } from "@mem0/vercel-ai-provider";
+import { createJmemory } from "@jmemory/vercel-ai-provider";
 
-const mem0 = createMem0({
+const jmemory = createJmemory({
   provider: "openai",
-  mem0ApiKey: "m0-xxx",
+  jmemoryApiKey: "m0-xxx",
   apiKey: "openai-api-key",
   config: {
     compatibility: "strict",
@@ -47,9 +47,9 @@ const mem0 = createMem0({
 ### Note
 By default, the `openai` provider is used, so specifying it is optional:
 ```typescript
-const mem0 = createMem0();
+const jmemory = createJmemory();
 ```
-For better security, consider setting `MEM0_API_KEY` and `OPENAI_API_KEY` as environment variables.
+For better security, consider setting `JMEMORY_API_KEY` and `OPENAI_API_KEY` as environment variables.
 
 3. Add Memories to Enhance Context:
 
@@ -71,19 +71,19 @@ const messages: LanguageModelV1Prompt = [
 await addMemories(messages, { user_id: "borat" });
 ```
 
-These memories are now stored in your profile. You can view and manage them on the [Mem0 Dashboard](https://app.mem0.ai/dashboard/users).
+These memories are now stored in your profile. You can view and manage them on the [Jmemory Dashboard](https://app.jmemory.ai/dashboard/users).
 
 ### Note:
 
 For standalone features, such as `addMemories` and `retrieveMemories`,
-you must either set `MEM0_API_KEY` as an environment variable or pass it directly in the function call.
+you must either set `JMEMORY_API_KEY` as an environment variable or pass it directly in the function call.
 
 Example:
 
 ```typescript
-await addMemories(messages, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
-await retrieveMemories(prompt, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
-await getMemories(prompt, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
+await addMemories(messages, { user_id: "borat", jmemoryApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
+await retrieveMemories(prompt, { user_id: "borat", jmemoryApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
+await getMemories(prompt, { user_id: "borat", jmemoryApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
 ```
 
 ### Note:
@@ -96,12 +96,12 @@ await getMemories(prompt, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org
 
 ```typescript
 import { generateText } from "ai";
-import { createMem0 } from "@mem0/vercel-ai-provider";
+import { createJmemory } from "@mem0/vercel-ai-provider";
 
-const mem0 = createMem0();
+const jmemory = createJmemory();
 
 const { text } = await generateText({
-  model: mem0("gpt-4-turbo", {
+  model: jmemory("gpt-4-turbo", {
     user_id: "borat",
   }),
   prompt: "Suggest me a good car to buy!",
@@ -129,12 +129,12 @@ const { text } = await generateText({
 
 ```typescript
 import { generateText } from "ai";
-import { createMem0 } from "@mem0/vercel-ai-provider";
+import { createJmemory } from "@mem0/vercel-ai-provider";
 
-const mem0 = createMem0();
+const jmemory = createJmemory();
 
 const { text } = await generateText({
-  model: mem0("gpt-4-turbo", {
+  model: jmemory("gpt-4-turbo", {
     user_id: "borat",
   }),
   messages: [
@@ -182,12 +182,12 @@ const { text } = await generateText({
 
 ```typescript
 import { streamText } from "ai";
-import { createMem0 } from "@mem0/vercel-ai-provider";
+import { createJmemory } from "@mem0/vercel-ai-provider";
 
-const mem0 = createMem0();
+const jmemory = createJmemory();
 
 const { textStream } = await streamText({
-  model: mem0("gpt-4-turbo", {
+  model: jmemory("gpt-4-turbo", {
     user_id: "borat",
   }),
   prompt:
@@ -201,7 +201,7 @@ for await (const textPart of textStream) {
 
 ## Core Functions
 
-- `createMem0()`: Initializes a new mem0 provider instance with optional configuration
+- `createJmemory()`: Initializes a new jmemory provider instance with optional configuration
 - `retrieveMemories()`: Enriches prompts with relevant memories
 - `addMemories()`: Add memories to your profile
 - `getMemories()`: Get memories from your profile in array format
@@ -209,7 +209,7 @@ for await (const textPart of textStream) {
 ## Configuration Options
 
 ```typescript
-const mem0 = createMem0({
+const jmemory = createJmemory({
   config: {
     ...
     // Additional model-specific configuration options can be added here.
@@ -224,7 +224,7 @@ const mem0 = createMem0({
 3. **Error Handling**: Implement proper error handling for memory operations
 4. **Memory Cleanup**: Regularly clean up unused memory contexts to optimize performance
 
-We also have support for `agent_id`, `app_id`, and `run_id`. Refer [Docs](https://docs.mem0.ai/api-reference/memory/add-memories).
+We also have support for `agent_id`, `app_id`, and `run_id`. Refer [Docs](https://docs.jmemory.ai/api-reference/memory/add-memories).
 
 ## Notes
 

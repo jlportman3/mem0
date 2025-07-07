@@ -1,16 +1,16 @@
-import { MemoryClient } from "./mem0";
-import type * as MemoryTypes from "./mem0.types";
+import { MemoryClient } from "./jmemory";
+import type * as JmemoryTypes from "./jmemory.types";
 
 // Re-export all types from mem0.types
 export type {
-  MemoryOptions,
+  JmemoryOptions,
   ProjectOptions,
-  Memory,
-  MemoryHistory,
-  MemoryUpdateBody,
+  Jmemory,
+  JmemoryHistory,
+  JmemoryUpdateBody,
   ProjectResponse,
   PromptUpdatePayload,
-  SearchOptions,
+  JmemorySearchOptions,
   Webhook,
   WebhookPayload,
   Messages,
@@ -19,7 +19,7 @@ export type {
   User,
   FeedbackPayload,
   Feedback,
-} from "./mem0.types";
+} from "./jmemory.types";
 
 // Export the main client
 export { MemoryClient };

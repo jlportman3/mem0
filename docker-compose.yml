@@ -1,0 +1,39 @@
+services:
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+
+  memgraph:
+    image: memgraph/memgraph-mage
+    ports:
+      - "7690:7687"
+      - "7444:7444"
+      - "3003:3000"
+    volumes:
+      - ./data/memgraph:/var/lib/memgraph
+    
+
+  universal_api:
+    image: universal-llm-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - server/.env.example
+    depends_on:
+      - qdrant
+      - memgraph
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility

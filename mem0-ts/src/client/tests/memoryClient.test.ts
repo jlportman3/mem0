@@ -1,12 +1,12 @@
-import { MemoryClient } from "../mem0";
+import { JmemoryClient } from "../jmemory";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const apiKey = process.env.MEM0_API_KEY || "";
-// const client = new MemoryClient({ apiKey, host: 'https://api.mem0.ai', organizationId: "org_gRNd1RrQa4y52iK4tG8o59hXyVbaULikgq4kethC", projectId: "proj_7RfMkWs0PMgXYweGUNKqV9M9mgIRNt5XcupE7mSP" });
+const apiKey = process.env.JMEMORY_API_KEY || "";
+// const client = new JmemoryClient({ apiKey, host: 'https://api.jmemory.ai', organizationId: "org_gRNd1RrQa4y52iK4tG8o59hXyVbaULikgq4kethC", projectId: "proj_7RfMkWs0PMgXYweGUNKqV9M9mgIRNt5XcupE7mSP" });
 // const client = new MemoryClient({ apiKey, host: 'https://api.mem0.ai', organizationName: "saket-default-org", projectName: "default-project" });
-const client = new MemoryClient({ apiKey, host: "https://api.mem0.ai" });
+const client = new JmemoryClient({ apiKey, host: "https://api.jmemory.ai" });
 
 // Generate a random string
 const randomString = () => {

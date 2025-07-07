@@ -1,5 +1,5 @@
 import { LanguageModelV1Prompt } from 'ai';
-import { Mem0ConfigSettings } from './mem0-types';
+import { JmemoryConfigSettings } from './jmemory-types';
 import { loadApiKey } from '@ai-sdk/provider-utils';
 interface Message {
     role: string;
@@ -60,7 +60,7 @@ const convertToMem0Format = (messages: LanguageModelV1Prompt) => {
     }
 }
 
-const searchInternalMemories = async (query: string, config?: Mem0ConfigSettings, top_k: number = 5) => {
+const searchInternalMemories = async (query: string, config?: JmemoryConfigSettings, top_k: number = 5) => {
     try {
         const filters: { AND: Array<{ [key: string]: string | undefined }> } = {
             AND: [],
@@ -93,9 +93,9 @@ const searchInternalMemories = async (query: string, config?: Mem0ConfigSettings
         }
 
         const apiKey = loadApiKey({
-            apiKey: (config&&config.mem0ApiKey),
-            environmentVariableName: "MEM0_API_KEY",
-            description: "Mem0",
+            apiKey: (config&&config.jmemoryApiKey),
+            environmentVariableName: "JMEMORY_API_KEY",
+            description: "Jmemory",
         });
 
         const options = {
@@ -115,7 +115,7 @@ const searchInternalMemories = async (query: string, config?: Mem0ConfigSettings
             }),
         };
 
-        const response = await fetch('https://api.mem0.ai/v2/memories/search/', options);
+        const response = await fetch('https://api.jmemory.ai/v2/memories/search/', options);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -127,7 +127,7 @@ const searchInternalMemories = async (query: string, config?: Mem0ConfigSettings
     }
 }
 
-const addMemories = async (messages: LanguageModelV1Prompt, config?: Mem0ConfigSettings) => {
+const addMemories = async (messages: LanguageModelV1Prompt, config?: JmemoryConfigSettings) => {
     try {
         let finalMessages: Array<Message> = [];
         if (typeof messages === "string") {
@@ -143,12 +143,12 @@ const addMemories = async (messages: LanguageModelV1Prompt, config?: Mem0ConfigS
     }
 }
 
-const updateMemories = async (messages: Array<Message>, config?: Mem0ConfigSettings) => {
+const updateMemories = async (messages: Array<Message>, config?: JmemoryConfigSettings) => {
     try {
         const apiKey = loadApiKey({
-            apiKey: (config&&config.mem0ApiKey),
-            environmentVariableName: "MEM0_API_KEY",
-            description: "Mem0",
+            apiKey: (config&&config.jmemoryApiKey),
+            environmentVariableName: "JMEMORY_API_KEY",
+            description: "Jmemory",
         });
 
         const options = {
@@ -160,7 +160,7 @@ const updateMemories = async (messages: Array<Message>, config?: Mem0ConfigSetti
             body: JSON.stringify({messages, ...config}),
         };
 
-        const response = await fetch('https://api.mem0.ai/v1/memories/', options);
+        const response = await fetch('https://api.jmemory.ai/v1/memories/', options);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -172,7 +172,7 @@ const updateMemories = async (messages: Array<Message>, config?: Mem0ConfigSetti
     }
 }
 
-const retrieveMemories = async (prompt: LanguageModelV1Prompt | string, config?: Mem0ConfigSettings) => {
+const retrieveMemories = async (prompt: LanguageModelV1Prompt | string, config?: JmemoryConfigSettings) => {
     try {
         const message = typeof prompt === 'string' ? prompt : flattenPrompt(prompt);
         const systemPrompt = "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
@@ -208,7 +208,7 @@ const retrieveMemories = async (prompt: LanguageModelV1Prompt | string, config?:
     }
 }
 
-const getMemories = async (prompt: LanguageModelV1Prompt | string, config?: Mem0ConfigSettings) => {
+const getMemories = async (prompt: LanguageModelV1Prompt | string, config?: JmemoryConfigSettings) => {
     try {
         const message = typeof prompt === 'string' ? prompt : flattenPrompt(prompt);
         const memories = await searchInternalMemories(message, config);
@@ -223,7 +223,7 @@ const getMemories = async (prompt: LanguageModelV1Prompt | string, config?: Mem0
     }
 }
 
-const searchMemories = async (prompt: LanguageModelV1Prompt | string, config?: Mem0ConfigSettings) => {
+const searchMemories = async (prompt: LanguageModelV1Prompt | string, config?: JmemoryConfigSettings) => {
     try {
         const message = typeof prompt === 'string' ? prompt : flattenPrompt(prompt);
         const memories = await searchInternalMemories(message, config);

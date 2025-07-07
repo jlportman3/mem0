@@ -10,7 +10,7 @@ Initial user memory is bootstrapped from predefined preferences, and the assista
 To run this file, you need to set the following environment variables:
 
 export OPENAI_API_KEY="your_openai_api_key"
-export MEM0_API_KEY="your_mem0_api_key"
+export JMEMORY_API_KEY="your_jmemory_api_key"
 export ELEVENLABS_API_KEY="your_elevenlabs_api_key"
 
 You must also have:

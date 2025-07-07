@@ -3,13 +3,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from mem0.configs.llms.base import BaseLlmConfig
-from mem0.llms.openai import OpenAILLM
+from jmemory.configs.llms.base import BaseLlmConfig
+from jmemory.llms.openai import OpenAILLM
 
 
 @pytest.fixture
 def mock_openai_client():
-    with patch("mem0.llms.openai.OpenAI") as mock_openai:
+    with patch("jmemory.llms.openai.OpenAI") as mock_openai:
         mock_client = Mock()
         mock_openai.return_value = mock_client
         yield mock_client

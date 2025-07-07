@@ -30,7 +30,7 @@ jobs:
         run: |
           hatch build --clean
 
-      # TODO: Needs to setup mem0 repo on Test PyPI
+      # TODO: Needs to setup jmemory repo on Test PyPI
       # - name: Publish distribution 📦 to Test PyPI
       #   uses: pypa/gh-action-pypi-publish@release/v1
       #   with:

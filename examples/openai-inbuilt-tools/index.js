@@ -1,10 +1,10 @@
-import MemoryClient from "mem0ai";
+import JmemoryClient from "jmemoryai";
 import { OpenAI } from "openai";
 import { zodResponsesFunction } from "openai/helpers/zod";
 import { z } from "zod";
 
-const mem0Config = {
-    apiKey: process.env.MEM0_API_KEY, // GET THIS API KEY FROM MEM0 (https://app.mem0.ai/dashboard/api-keys)
+const jmemoryConfig = {
+    apiKey: process.env.JMEMORY_API_KEY, // GET THIS API KEY FROM Jmemory (https://app.jmemory.ai/dashboard/api-keys)
     user_id: "sample-user",
 };
 
@@ -36,7 +36,7 @@ const Cars = z.object({
 
 async function main(memory = false) {
   const openAIClient = new OpenAI();
-  const mem0Client = new MemoryClient(mem0Config);
+  const jmemoryClient = new JmemoryClient(jmemoryConfig);
 
   const input = "Suggest me some cars that I can buy today.";
 
@@ -64,7 +64,7 @@ async function main(memory = false) {
 }
 
 async function addSampleMemories() {
-  const mem0Client = new MemoryClient(mem0Config);
+  const jmemoryClient = new JmemoryClient(jmemoryConfig);
 
   const myInterests = "I Love BMW, Audi and Porsche. I Hate Mercedes. I love Red cars and Maroon cars. I have a budget of 120K to 150K USD. I like Audi the most.";
   

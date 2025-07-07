@@ -1,17 +1,17 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { createMem0 } from "../../src";
+import { createJmemory } from "../../src";
 import { generateText, LanguageModelV1Prompt } from "ai";
 import { testConfig } from "../../config/test-config";
 
 describe("OPENAI MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(30000);
-  let mem0: any;
+  let jmemory: any;
 
   beforeEach(() => {
-    mem0 = createMem0({
+    jmemory = createJmemory({
       provider: "openai",
       apiKey: process.env.OPENAI_API_KEY,
       mem0Config: {
@@ -32,7 +32,7 @@ describe("OPENAI MEM0 Tests", () => {
     ];
     
     const { text } = await generateText({
-      model: mem0("gpt-4-turbo"),
+      model: jmemory("gpt-4-turbo"),
       messages: messages
     });
 
@@ -45,7 +45,7 @@ describe("OPENAI MEM0 Tests", () => {
     const prompt = "Suggest me a good car to buy.";
 
     const { text } = await generateText({
-      model: mem0("gpt-4-turbo"),
+      model: jmemory("gpt-4-turbo"),
       prompt: prompt
     });
 

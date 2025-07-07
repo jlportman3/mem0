@@ -15,7 +15,7 @@ WORKDIR /app/packages
 COPY pyproject.toml .
 COPY poetry.lock .
 COPY README.md .
-COPY mem0 ./mem0
+COPY jmemory ./jmemory
 RUN pip install -e .[graph,llms]
 
 # Return to app directory and copy server code

@@ -4,7 +4,7 @@ import { Message } from "../types";
 import { useContext, useEffect, useRef } from "react";
 import GlobalContext from "@/contexts/GlobalContext";
 import Markdown from "react-markdown";
-import Mem00Logo from "../assets/mem0_logo.jpeg";
+import JmemoryLogo from "../assets/jmemory_logo.jpeg";
 import UserLogo from "../assets/user.jpg";
 
 const Messages = () => {
@@ -40,7 +40,7 @@ const Messages = () => {
                   <Avatar className="h-8 w-8">
                     <AvatarImage
                       src={
-                        message.sender === "assistant" ? Mem00Logo : UserLogo
+                        message.sender === "assistant" ? JmemoryLogo : UserLogo
                       }
                     />
                     <AvatarFallback>
@@ -78,7 +78,7 @@ const Messages = () => {
                 className={`flex items-start space-x-2 max-w-[80%] flex-row`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={Mem00Logo} />
+                  <AvatarImage src={JmemoryLogo} />
                   <AvatarFallback>{"AI"}</AvatarFallback>
                 </Avatar>
                 <div

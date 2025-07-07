@@ -1,6 +1,6 @@
 import { VectorStore as LangchainVectorStoreInterface } from "@langchain/core/vectorstores";
 import { Document } from "@langchain/core/documents";
-import { VectorStore } from "./base"; // mem0's VectorStore interface
+import { VectorStore } from "./base"; // jmemory's VectorStore interface
 import { SearchFilters, VectorStoreConfig, VectorStoreResult } from "../types";
 
 // Config specifically for the Langchain wrapper

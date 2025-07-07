@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { createMem0, retrieveMemories } from "../../src";
+import { createJmemory, retrieveMemories } from "../../src";
 import { generateText, LanguageModelV1Prompt } from "ai";
 import { testConfig } from "../../config/test-config";
 import { createAnthropic } from "@ai-sdk/anthropic";
@@ -10,10 +10,10 @@ describe("ANTHROPIC MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(30000);
 
-  let mem0: any;
+  let jmemory: any;
 
   beforeEach(() => {
-    mem0 = createMem0({
+    jmemory = createJmemory({
       provider: "anthropic",
       apiKey: process.env.ANTHROPIC_API_KEY,
       mem0Config: {
@@ -35,7 +35,7 @@ describe("ANTHROPIC MEM0 Tests", () => {
     
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("claude-3-haiku-20240307"),
+      model: jmemory("claude-3-haiku-20240307"),
       messages: messages,
     });
 
@@ -49,7 +49,7 @@ describe("ANTHROPIC MEM0 Tests", () => {
 
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("claude-3-haiku-20240307"),
+      model: jmemory("claude-3-haiku-20240307"),
       prompt: prompt,
     });
 

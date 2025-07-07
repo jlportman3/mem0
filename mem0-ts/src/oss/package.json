@@ -1,7 +1,7 @@
 {
-  "name": "mem0ai-oss",
+  "name": "jmemory-oss",
   "version": "1.0.0",
-  "description": "TypeScript implementation of mem0 memory system",
+  "description": "TypeScript implementation of jmemory memory system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

@@ -1,8 +1,8 @@
 version: "3.9"
-name: mem0-dev
+name: jmemory-dev
 
 services:
-  mem0:
+  jmemory:
     build:
       context: ..  # Set context to parent directory
       dockerfile: server/dev.Dockerfile
@@ -15,7 +15,7 @@ services:
     volumes:
       - ./history:/app/history      # History db location. By default, it creates a history.db file on the server folder
       - .:/app                      # Server code. This allows to reload the app when the server code is updated
-      - ../mem0:/app/packages/mem0  # Mem0 library. This allows to reload the app when the library code is updated
+      - ../jmemory:/app/packages/jmemory  # Jmemory library. This allows to reload the app when the library code is updated
     deploy:
       resources:
         reservations:

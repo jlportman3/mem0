@@ -1,25 +1,25 @@
 import { LanguageModelV1, ProviderV1 } from "@ai-sdk/provider";
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
-import { Mem0ChatModelId, Mem0ChatSettings, Mem0Config } from "./mem0-types";
+import { JmemoryChatModelId, JmemoryChatSettings, JmemoryConfig } from "./jmemory-types";
 import { OpenAIProviderSettings } from "@ai-sdk/openai";
-import { Mem0GenericLanguageModel } from "./mem0-generic-language-model";
+import { JmemoryGenericLanguageModel } from "./jmemory-generic-language-model";
 import { OpenAIChatSettings } from "@ai-sdk/openai/internal";
 import { AnthropicMessagesSettings } from "@ai-sdk/anthropic/internal";
 import { AnthropicProviderSettings } from "@ai-sdk/anthropic";
 
-export interface Mem0Provider extends ProviderV1 {
-  (modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV1;
+export interface JmemoryProvider extends ProviderV1 {
+  (modelId: JmemoryChatModelId, settings?: JmemoryChatSettings): LanguageModelV1;
 
-  chat(modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV1;
-  completion(modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV1;
+  chat(modelId: JmemoryChatModelId, settings?: JmemoryChatSettings): LanguageModelV1;
+  completion(modelId: JmemoryChatModelId, settings?: JmemoryChatSettings): LanguageModelV1;
 
   languageModel(
-    modelId: Mem0ChatModelId,
-    settings?: Mem0ChatSettings
+    modelId: JmemoryChatModelId,
+    settings?: JmemoryChatSettings
   ): LanguageModelV1;
 }
 
-export interface Mem0ProviderSettings
+export interface JmemoryProviderSettings
   extends OpenAIChatSettings,
     AnthropicMessagesSettings {
   baseURL?: string;
@@ -37,11 +37,11 @@ export interface Mem0ProviderSettings
    */
   headers?: Record<string, string>;
   name?: string;
-  mem0ApiKey?: string;
+  jmemoryApiKey?: string;
   apiKey?: string;
   provider?: string;
   modelType?: "completion" | "chat";
-  mem0Config?: Mem0Config;
+  jmemoryConfig?: JmemoryConfig;
 
   /**
    * The configuration for the provider.
@@ -49,11 +49,11 @@ export interface Mem0ProviderSettings
   config?: OpenAIProviderSettings | AnthropicProviderSettings;
 }
 
-export function createMem0(
+export function createJmemory(
   options: Mem0ProviderSettings = {
     provider: "openai",
   }
-): Mem0Provider {
+): JmemoryProvider {
   const baseURL =
     withoutTrailingSlash(options.baseURL) ?? "http://api.openai.com";
   const getHeaders = () => ({
@@ -61,10 +61,10 @@ export function createMem0(
   });
 
   const createGenericModel = (
-    modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    modelId: JmemoryChatModelId,
+    settings: JmemoryChatSettings = {}
   ) =>
-    new Mem0GenericLanguageModel(
+    new JmemoryGenericLanguageModel(
       modelId,
       settings,
       {
@@ -73,18 +73,18 @@ export function createMem0(
         headers: getHeaders(),
         provider: options.provider || "openai",
         name: options.name,
-        mem0ApiKey: options.mem0ApiKey,
+        jmemoryApiKey: options.jmemoryApiKey,
         apiKey: options.apiKey,
-        mem0Config: options.mem0Config,
+        jmemoryConfig: options.jmemoryConfig,
       },
       options.config
     );
 
   const createCompletionModel = (
-    modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    modelId: JmemoryChatModelId,
+    settings: JmemoryChatSettings = {}
   ) =>
-    new Mem0GenericLanguageModel(
+    new JmemoryGenericLanguageModel(
       modelId,
       settings,
       {
@@ -93,19 +93,19 @@ export function createMem0(
         headers: getHeaders(),
         provider: options.provider || "openai",
         name: options.name,
-        mem0ApiKey: options.mem0ApiKey,
+        jmemoryApiKey: options.jmemoryApiKey,
         apiKey: options.apiKey,
-        mem0Config: options.mem0Config,
+        jmemoryConfig: options.jmemoryConfig,
         modelType: "completion",
       },
       options.config
     );
 
   const createChatModel = (
-    modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    modelId: JmemoryChatModelId,
+    settings: JmemoryChatSettings = {}
   ) =>
-    new Mem0GenericLanguageModel(
+    new JmemoryGenericLanguageModel(
       modelId,
       settings,
       {
@@ -114,21 +114,21 @@ export function createMem0(
         headers: getHeaders(),
         provider: options.provider || "openai",
         name: options.name,
-        mem0ApiKey: options.mem0ApiKey,
+        jmemoryApiKey: options.jmemoryApiKey,
         apiKey: options.apiKey,
-        mem0Config: options.mem0Config,
+        jmemoryConfig: options.jmemoryConfig,
         modelType: "completion",
       },
       options.config
     );
 
   const provider = function (
-    modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    modelId: JmemoryChatModelId,
+    settings: JmemoryChatSettings = {}
   ) {
     if (new.target) {
       throw new Error(
-        "The Mem0 model function cannot be called with the new keyword."
+        "The Jmemory model function cannot be called with the new keyword."
       );
     }
 
@@ -139,7 +139,7 @@ export function createMem0(
   provider.completion = createCompletionModel;
   provider.chat = createChatModel;
 
-  return provider as unknown as Mem0Provider;
+  return provider as unknown as JmemoryProvider;
 }
 
-export const mem0 = createMem0();
+export const jmemory = createJmemory();

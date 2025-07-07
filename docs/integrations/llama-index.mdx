@@ -4,10 +4,10 @@ title: LlamaIndex
 
 <Snippet file="paper-release.mdx" />
 
-LlamaIndex supports Mem0 as a [memory store](https://llamahub.ai/l/memory/llama-index-memory-mem0). In this guide, we'll show you how to use it.
+LlamaIndex supports Jmemory as a [memory store](https://llamahub.ai/l/memory/llama-index-memory-jmemory). In this guide, we'll show you how to use it.
 
 <Note type="info">
-  🎉 Exciting news! [**Mem0Memory**](https://docs.llamaindex.ai/en/stable/examples/memory/Mem0Memory/) now supports **ReAct** and **FunctionCalling** agents.
+  🎉 Exciting news! [**JmemoryMemory**](https://docs.llamaindex.ai/en/stable/examples/memory/JmemoryMemory/) now supports **ReAct** and **FunctionCalling** agents.
 </Note>
 
 ### Installation
@@ -15,34 +15,34 @@ LlamaIndex supports Mem0 as a [memory store](https://llamahub.ai/l/memory/llama-
 To install the required package, run:
 
 ```bash
-pip install llama-index-core llama-index-memory-mem0
+pip install llama-index-core llama-index-memory-jmemory
 ```
 
 ### Setup with Mem0 Platform
 
-Set your Mem0 Platform API key as an environment variable. You can replace `<your-mem0-api-key>` with your actual API key:
+Set your Jmemory Platform API key as an environment variable. You can replace `<your-jmemory-api-key>` with your actual API key:
 
 <Note type="info">
-  You can obtain your Mem0 Platform API key from the [Mem0 Platform](https://app.mem0.ai/login).
+  Ensure your Jmemory API key is securely configured in your environment.
 </Note>
 
 ```python
-os.environ["MEM0_API_KEY"] = "<your-mem0-api-key>"
+os.environ["JMEMORY_API_KEY"] = "<your-jmemory-api-key>"
 ```
 
-Import the necessary modules and create a Mem0Memory instance:
+Import the necessary modules and create a JmemoryMemory instance:
 ```python
-from llama_index.memory.mem0 import Mem0Memory
+from llama_index.memory.mem0 import JmemoryMemory
 
 context = {"user_id": "user_1"}
-memory_from_client = Mem0Memory.from_client(
+memory_from_client = JmemoryMemory.from_client(
     context=context,
     api_key="<your-mem0-api-key>",
     search_msg_limit=4,  # optional, default is 5
 )
 ```
 
-Context is used to identify the user, agent or the conversation in the Mem0. It is required to be passed in the at least one of the fields in the `Mem0Memory` constructor. It can be any of the following:
+Context is used to identify the user, agent or the conversation in the Mem0. It is required to be passed in the at least one of the fields in the `JmemoryMemory` constructor. It can be any of the following:
 
 ```python
 context = {
@@ -93,10 +93,10 @@ config = {
 }
 ```
 
-Create a Mem0Memory instance:
+Create a JmemoryMemory instance:
 
 ```python
-memory_from_config = Mem0Memory.from_config(
+memory_from_config = JmemoryMemory.from_config(
     context=context,
     config=config,
     search_msg_limit=4,  # optional, default is 5

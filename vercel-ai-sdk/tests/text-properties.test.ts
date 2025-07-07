@@ -9,7 +9,7 @@ interface Provider {
 
 describe.each(testConfig.providers)('TEXT/STREAM PROPERTIES: Tests with model %s', (provider: Provider) => {
   const { userId } = testConfig;
-  let mem0: ReturnType<typeof testConfig.createTestClient>;
+  let jmemory: ReturnType<typeof testConfig.createTestClient>;
   jest.setTimeout(50000);
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe.each(testConfig.providers)('TEXT/STREAM PROPERTIES: Tests with model %s
   it("should stream text with onChunk handler", async () => {
     const chunkTexts: string[] = [];
     const { textStream } = streamText({
-      model: mem0(provider.activeModel, {
+      model: jmemory(provider.activeModel, {
         user_id: userId, // Use the uniform userId
       }),
       prompt: "Write only the name of the car I prefer and its color.",
@@ -42,7 +42,7 @@ describe.each(testConfig.providers)('TEXT/STREAM PROPERTIES: Tests with model %s
 
   it("should call onFinish handler without throwing an error", async () => {
     await streamText({
-      model: mem0(provider.activeModel, {
+      model: jmemory(provider.activeModel, {
         user_id: userId, // Use the uniform userId
       }),
       prompt: "Write only the name of the car I prefer and its color.",
@@ -57,7 +57,7 @@ describe.each(testConfig.providers)('TEXT/STREAM PROPERTIES: Tests with model %s
       text, // combined text
       usage, // combined usage of all steps
     } = await generateText({
-      model: mem0.completion(provider.activeModel, {
+      model: jmemory.completion(provider.activeModel, {
         user_id: userId,
       }), // Ensure the model name is correct
       maxSteps: 5, // Enable multi-step calls

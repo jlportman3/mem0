@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { createMem0 } from "../src";
+import { createJmemory } from "../src";
 
 dotenv.config();
 
@@ -10,8 +10,8 @@ export interface Provider {
 }
 
 export const testConfig = {
-  apiKey: process.env.MEM0_API_KEY,
-  userId: "mem0-ai-sdk-test-user-1134774",
+  apiKey: process.env.JMEMORY_API_KEY,
+  userId: "jmemory-ai-sdk-test-user-1134774",
   deleteId: "",
   providers: [
     {
@@ -50,9 +50,9 @@ export const testConfig = {
   },
 
   createTestClient: (provider: Provider) => {
-    return createMem0({
+    return createJmemory({
       provider: provider.name,
-      mem0ApiKey: process.env.MEM0_API_KEY,
+      jmemoryApiKey: process.env.JMEMORY_API_KEY,
       apiKey: provider.apiKey,
     });
   },
@@ -65,7 +65,7 @@ export const testConfig = {
     };
 
     try {
-      const response = await fetch('https://api.mem0.ai/v1/entities/', options);
+      const response = await fetch('https://api.jmemory.ai/v1/entities/', options);
       const data = await response.json();
       const entity = data.results.find((item: any) => item.name === this.userId);
       if (entity) {
@@ -92,7 +92,7 @@ export const testConfig = {
     };
 
     try {
-      const response = await fetch(`https://api.mem0.ai/v1/entities/user/${this.deleteId}/`, options);
+      const response = await fetch(`https://api.jmemory.ai/v1/entities/user/${this.deleteId}/`, options);
       if (!response.ok) {
         throw new Error(`Failed to delete user: ${response.statusText}`);
       }

@@ -1,14 +1,14 @@
-import { Mem0ProviderSettings } from "./mem0-provider";
+import { JmemoryProviderSettings } from "./jmemory-provider";
 import { OpenAIChatSettings } from "@ai-sdk/openai/internal";
 import { AnthropicMessagesSettings } from "@ai-sdk/anthropic/internal";
 import {
   LanguageModelV1
 } from "@ai-sdk/provider";
 
-export type Mem0ChatModelId =
+export type JmemoryChatModelId =
   | (string & NonNullable<unknown>);
 
-export interface Mem0ConfigSettings {
+export interface JmemoryConfigSettings {
   user_id?: string;
   app_id?: string;
   agent_id?: string;
@@ -22,7 +22,7 @@ export interface Mem0ConfigSettings {
   infer?: boolean;
   page?: number;
   page_size?: number;
-  mem0ApiKey?: string;
+  jmemoryApiKey?: string;
   top_k?: number;
   threshold?: number;
   rerank?: boolean;
@@ -31,11 +31,11 @@ export interface Mem0ConfigSettings {
   filter_memories?: boolean;
 }
 
-export interface Mem0ChatConfig extends Mem0ConfigSettings, Mem0ProviderSettings {}
+export interface JmemoryChatConfig extends JmemoryConfigSettings, JmemoryProviderSettings {}
 
-export interface Mem0Config extends Mem0ConfigSettings {}
-export interface Mem0ChatSettings extends OpenAIChatSettings, AnthropicMessagesSettings, Mem0ConfigSettings {}
+export interface JmemoryConfig extends JmemoryConfigSettings {}
+export interface JmemoryChatSettings extends OpenAIChatSettings, AnthropicMessagesSettings, JmemoryConfigSettings {}
 
-export interface Mem0StreamResponse extends Awaited<ReturnType<LanguageModelV1['doStream']>> {
+export interface JmemoryStreamResponse extends Awaited<ReturnType<LanguageModelV1['doStream']>> {
   memories: any;
 }

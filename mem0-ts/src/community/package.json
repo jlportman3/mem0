@@ -1,5 +1,5 @@
 {
-  "name": "@mem0/community",
+  "name": "@jmemory/community",
   "version": "0.0.1",
   "description": "Community features for Mem0",
   "main": "./dist/index.js",
@@ -55,7 +55,7 @@
     "tsconfig": "./tsconfig.json"
   },
   "keywords": [
-    "mem0",
+    "jmemory",
     "community",
     "ai",
     "memory"
@@ -78,7 +78,7 @@
     "@langchain/community": "^0.3.36",
     "@langchain/core": "^0.3.42",
     "axios": "1.7.7",
-    "mem0ai": "^2.1.8",
+    "jmemoryai": "^2.1.8",
     "uuid": "9.0.1",
     "zod": "3.22.4"
   },

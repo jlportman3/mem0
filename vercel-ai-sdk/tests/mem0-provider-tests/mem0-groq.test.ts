@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { createMem0, retrieveMemories } from "../../src";
+import { createJmemory, retrieveMemories } from "../../src";
 import { generateText, LanguageModelV1Prompt } from "ai";
 import { testConfig } from "../../config/test-config";
 import { createGroq } from "@ai-sdk/groq";
@@ -10,10 +10,10 @@ describe("GROQ MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(30000);
 
-  let mem0: any;
+  let jmemory: any;
 
   beforeEach(() => {
-    mem0 = createMem0({
+    jmemory = createJmemory({
       provider: "groq",
       apiKey: process.env.GROQ_API_KEY,
       mem0Config: {
@@ -36,7 +36,7 @@ describe("GROQ MEM0 Tests", () => {
     
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("llama3-8b-8192"),
+      model: jmemory("llama3-8b-8192"),
       messages: messages
     });
 
@@ -50,7 +50,7 @@ describe("GROQ MEM0 Tests", () => {
 
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("llama3-8b-8192"),
+      model: jmemory("llama3-8b-8192"),
       prompt: prompt
     });
 

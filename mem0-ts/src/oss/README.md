@@ -1,6 +1,6 @@
-# mem0-ts
+# jmemory-ts
 
-A TypeScript implementation of the mem0 memory system, using OpenAI for embeddings and completions.
+A TypeScript implementation of the jmemory memory system, using OpenAI for embeddings and completions.
 
 ## Features
 
@@ -19,7 +19,7 @@ A TypeScript implementation of the mem0 memory system, using OpenAI for embeddin
 
 ```bash
 git clone <repository-url>
-cd mem0-ts
+cd jmemory-ts
 ```
 
 2. Install dependencies:
@@ -46,7 +46,7 @@ npm run build
 ### Basic Example
 
 ```typescript
-import { Memory } from "mem0-ts";
+import { Memory } from "jmemory-ts";
 
 // Create a memory instance with default OpenAI configuration
 const memory = new Memory();

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { addMemories, createMem0 } from "../src";
+import { addMemories, createJmemory } from "../src";
 import { generateText, tool } from "ai";
 import { testConfig } from "../config/test-config";
 import { z } from "zod";
@@ -18,7 +18,7 @@ describe("Tool Calls Tests", () => {
   });
 
   it("should Execute a Tool Call Using OpenAI", async () => {
-    const mem0OpenAI = createMem0({
+    const jmemoryOpenAI = createJmemory({
       provider: "openai",
       apiKey: process.env.OPENAI_API_KEY,
       mem0Config: {
@@ -54,7 +54,7 @@ describe("Tool Calls Tests", () => {
   });
 
   it("should Execute a Tool Call Using Anthropic", async () => {
-    const mem0Anthropic = createMem0({
+    const jmemoryAnthropic = createJmemory({
       provider: "anthropic",
       apiKey: process.env.ANTHROPIC_API_KEY,
       mem0Config: {

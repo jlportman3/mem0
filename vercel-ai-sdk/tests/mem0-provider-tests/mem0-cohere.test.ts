@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { createMem0, retrieveMemories } from "../../src";
+import { createJmemory, retrieveMemories } from "../../src";
 import { generateText, LanguageModelV1Prompt } from "ai";
 import { testConfig } from "../../config/test-config";
 import { createCohere } from "@ai-sdk/cohere";
@@ -9,10 +9,10 @@ import { createCohere } from "@ai-sdk/cohere";
 describe("COHERE MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(30000);
-  let mem0: any;
+  let jmemory: any;
 
   beforeEach(() => {
-    mem0 = createMem0({
+    jmemory = createJmemory({
       provider: "cohere",
       apiKey: process.env.COHERE_API_KEY,
       mem0Config: {
@@ -35,7 +35,7 @@ describe("COHERE MEM0 Tests", () => {
     
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("command-r-plus"),
+      model: jmemory("command-r-plus"),
       messages: messages
     });
 
@@ -49,7 +49,7 @@ describe("COHERE MEM0 Tests", () => {
 
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("command-r-plus"),
+      model: jmemory("command-r-plus"),
       prompt: prompt
     });
 

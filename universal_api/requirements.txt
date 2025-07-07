@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+litellm
+torch --index-url https://download.pytorch.org/whl/cu118
+transformers
+sentence-transformers
+pytz
+qdrant-client
+langchain-memgraph

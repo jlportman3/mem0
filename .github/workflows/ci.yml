@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'mem0/**'
+      - 'jmemory/**'
       - 'tests/**'
       - 'embedchain/**'
   pull_request:
     paths:
-      - 'mem0/**'
+      - 'jmemory/**'
       - 'tests/**'
       - 'embedchain/**'
 
@@ -17,7 +17,7 @@ jobs:
   check_changes:
     runs-on: ubuntu-latest
     outputs:
-      mem0_changed: ${{ steps.filter.outputs.mem0 }}
+      mem0_changed: ${{ steps.filter.outputs.jmemory }}
       embedchain_changed: ${{ steps.filter.outputs.embedchain }}
     steps:
     - uses: actions/checkout@v3
@@ -25,13 +25,13 @@ jobs:
       id: filter
       with:
         filters: |
-          mem0:
-            - 'mem0/**'
+          jmemory:
+            - 'jmemory/**'
             - 'tests/**'
           embedchain:
             - 'embedchain/**'
 
-  build_mem0:
+  build_jmemory:
     needs: check_changes
     if: needs.check_changes.outputs.mem0_changed == 'true'
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-mem0-${{ runner.os }}-${{ hashFiles('**/pyproject.toml') }}
+          key: venv-jmemory-${{ runner.os }}-${{ hashFiles('**/pyproject.toml') }}
       - name: Install GEOS Libraries
         run: sudo apt-get update && sudo apt-get install -y libgeos-dev
       - name: Install dependencies

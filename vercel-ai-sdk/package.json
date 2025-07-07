@@ -1,5 +1,5 @@
 {
-  "name": "@mem0/vercel-ai-provider",
+  "name": "@jmemory/vercel-ai-provider",
   "version": "1.0.6",
   "description": "Vercel AI Provider for providing memory to LLMs",
   "main": "./dist/index.js",
@@ -35,7 +35,7 @@
     "@ai-sdk/provider-utils": "2.1.10",
     "ai": "4.1.46",
     "dotenv": "^16.4.5",
-    "mem0ai": "^2.1.12",
+    "jmemoryai": "^2.1.12",
     "partial-json": "0.1.7",
     "zod": "^3.0.0"
   },

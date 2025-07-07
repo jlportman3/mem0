@@ -10,7 +10,7 @@ interface Provider {
 
 describe.each(testConfig.providers)('TESTS: Generate/Stream Text with model %s', (provider: Provider) => {
   const { userId } = testConfig;
-  let mem0: ReturnType<typeof testConfig.createTestClient>;
+  let jmemory: ReturnType<typeof testConfig.createTestClient>;
   jest.setTimeout(50000);
   
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe.each(testConfig.providers)('TESTS: Generate/Stream Text with model %s',
 
   it("should generate text using mem0 model", async () => {
     const { text } = await generateText({
-      model: mem0(provider.activeModel, {
+      model: jmemory(provider.activeModel, {
         user_id: userId,
       }),
       prompt: "Suggest me a good car to buy!",
@@ -46,7 +46,7 @@ describe.each(testConfig.providers)('TESTS: Generate/Stream Text with model %s',
 
   it("should generate text using provider with memories", async () => {
     const { text } = await generateText({
-      model: mem0(provider.activeModel, {
+      model: jmemory(provider.activeModel, {
         user_id: userId,
       }),
       messages: [
@@ -66,7 +66,7 @@ describe.each(testConfig.providers)('TESTS: Generate/Stream Text with model %s',
 
   it("should stream text using Mem0 provider", async () => {
     const { textStream } = await streamText({
-      model: mem0(provider.activeModel, {
+      model: jmemory(provider.activeModel, {
         user_id: userId, // Use the uniform userId
       }),
       prompt: "Suggest me a good car to buy! Write only the car name and it's color.",

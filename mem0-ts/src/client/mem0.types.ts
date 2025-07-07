@@ -1,4 +1,4 @@
-export interface MemoryOptions {
+export interface JmemoryOptions {
   api_version?: API_VERSION | string;
   version?: API_VERSION | string;
   user_id?: string;
@@ -61,7 +61,7 @@ export interface Messages {
 
 export interface Message extends Messages {}
 
-export interface MemoryHistory {
+export interface JmemoryHistory {
   id: string;
   memory_id: string;
   input: Array<Messages>;
@@ -74,7 +74,7 @@ export interface MemoryHistory {
   updated_at: Date;
 }
 
-export interface SearchOptions extends MemoryOptions {
+export interface JmemorySearchOptions extends JmemoryOptions {
   api_version?: API_VERSION | string;
   limit?: number;
   enable_graph?: boolean;
@@ -94,11 +94,11 @@ enum Event {
   NOOP = "NOOP",
 }
 
-export interface MemoryData {
+export interface JmemoryData {
   memory: string;
 }
 
-export interface Memory {
+export interface Jmemory {
   id: string;
   messages?: Array<Messages>;
   event?: Event | string;
@@ -118,7 +118,7 @@ export interface Memory {
   run_id?: string | null;
 }
 
-export interface MemoryUpdateBody {
+export interface JmemoryUpdateBody {
   memoryId: string;
   text: string;
 }

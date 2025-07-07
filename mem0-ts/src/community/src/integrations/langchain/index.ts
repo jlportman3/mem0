@@ -1,1 +1,1 @@
-export * from "./mem0";
+export * from "./jmemory";

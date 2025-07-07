@@ -1,7 +1,7 @@
 build:
-	docker build -t mem0-api-server .
+	docker build -t jmemory-api-server .
 
 run_local:
-	docker run -p 8000:8000 -v $(shell pwd):/app mem0-api-server --env-file .env
+	docker run -p 8000:8000 -v $(shell pwd):/app jmemory-api-server --env-file .env
 
 .PHONY: build run_local

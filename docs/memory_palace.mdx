@@ -1,0 +1,39 @@
+---
+title: The Memory Palace
+icon: "brain-circuit"
+iconType: "solid"
+---
+
+## The Architecture of Memory
+
+Mem0's memory system is designed as a **Memory Palace**—a dynamic, navigable graph where concepts, facts, episodes, and procedures are represented as interconnected nodes. This architecture allows for a more human-like approach to memory, enabling retrieval not just by direct query but through associative linkage, contextual relevance, and structural proximity.
+
+### Core Components
+
+The Memory Palace is built on a hybrid data store model, leveraging the strengths of both graph and vector databases:
+
+- **Memgraph (Graph Database):** At the heart of the Memory Palace is Memgraph, a high-performance, in-memory graph database. It is responsible for storing the relationships between all memory items. This is what allows for the complex, associative retrieval that makes the Memory Palace so powerful.
+
+- **Qdrant (Vector Database):** Qdrant is used for all vector-based storage and search. It handles the semantic meaning of the memories, allowing for fast and efficient similarity searches.
+
+### The Six Layers of Memory
+
+The Memory Palace is organized into six distinct layers, each serving a specific purpose:
+
+1.  **Short-Term Memory:** Volatile, recent tokens from the current and immediately previous sessions (up to 24 hours). Serves for conversational continuity and local state.
+
+2.  **Mid-Term Memory:** Persistent session summaries and extracted facts with time decay. Used to reinforce relevant info after a few exposures.
+
+3.  **Long-Term Memory:** Stable, high-value information with repetition-based promotion. Immutable unless edited or deleted by the user.
+
+4.  **Episodic Memory:** A timeline of user interactions, commands, and results with full context and timestamps. Supports "what happened when" queries.
+
+5.  **Semantic Memory:** Abstracted knowledge learned from the user (e.g., definitions, relationships, taxonomies). Used for reasoning and inference.
+
+6.  **Procedural Memory:** Observed or instructed sequences of tasks, commands, habits, and workflows. Supports "how-to" execution, automation, and pattern recall.
+
+### Multimodal Future
+
+This system is being built with the future ingestion of **multimodal data** in mind. Images, video, audio, documents, and structured files will all be processed, embedded, and linked to the memory graph—retaining modality, timestamp, source, and relevance. Relationships between modalities (e.g., "this image was shown during that conversation") will be treated as first-class memory connections.
+
+Nothing is to be discarded arbitrarily. All memory persists unless explicitly deleted by user instruction. The system is designed to mimic a human being with eidetic recall and an ever-expanding, richly connected mental landscape.

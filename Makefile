@@ -1,52 +1,26 @@
-.PHONY: format sort lint
+.PHONY: pull build rebuild start stop clean
 
-# Variables
-ISORT_OPTIONS = --profile black
-PROJECT_NAME := mem0ai
+DOCKER_IMAGE_NAME = universal-llm-api
 
-# Default target
-all: format sort lint
-
-install:
-	hatch env create
-
-install_all:
-	pip install ruff==0.6.9 groq together boto3 litellm ollama chromadb weaviate weaviate-client sentence_transformers vertexai \
-	                        google-generativeai elasticsearch opensearch-py vecs "pinecone<7.0.0" pinecone-text faiss-cpu langchain-community \
-							upstash-vector azure-search-documents langchain-memgraph langchain-neo4j rank-bm25 pymochow
-
-# Format code with ruff
-format:
-	hatch run format
-
-# Sort imports with isort
-sort:
-	hatch run isort mem0/
-
-# Lint code with ruff
-lint:
-	hatch run lint
-
-docs:
-	cd docs && mintlify dev
+pull:
+	docker pull qdrant/qdrant
+	docker pull memgraph/memgraph-mage
 
 build:
-	hatch build
+	cp -r jmemory universal_api/jmemory
+	cd universal_api && docker build -t $(DOCKER_IMAGE_NAME) .
+	rm -rf universal_api/jmemory
 
-publish:
-	hatch publish
+rebuild:
+	cp -r jmemory universal_api/jmemory
+	cd universal_api && docker build --no-cache -t $(DOCKER_IMAGE_NAME) .
+	rm -rf universal_api/jmemory
+
+start:
+	docker-compose up -d
+
+stop:
+	docker-compose down
 
 clean:
-	rm -rf dist
-
-test:
-	hatch run test
-
-test-py-3.9:
-	hatch run dev_py_3_9:test
-
-test-py-3.10:
-	hatch run dev_py_3_10:test
-
-test-py-3.11:
-	hatch run dev_py_3_11:test
+	docker-compose down -v --rmi all

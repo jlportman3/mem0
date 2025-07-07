@@ -1,19 +1,5 @@
 import axios from "axios";
-import {
-  AllUsers,
-  ProjectOptions,
-  Memory,
-  MemoryHistory,
-  MemoryOptions,
-  MemoryUpdateBody,
-  ProjectResponse,
-  PromptUpdatePayload,
-  SearchOptions,
-  Webhook,
-  WebhookPayload,
-  Message,
-  FeedbackPayload,
-} from "./mem0.types";
+import { AllUsers, ProjectOptions, Memory, MemoryHistory, MemoryOptions, MemoryUpdateBody, ProjectResponse, PromptUpdatePayload, SearchOptions, Webhook, WebhookPayload, Message, FeedbackPayload, } from "./jmemory.types";
 
 class APIError extends Error {
   constructor(message: string) {
@@ -43,13 +29,13 @@ export default class MemoryClient {
 
   _validateApiKey(): any {
     if (!this.apiKey) {
-      throw new Error("Mem0 API key is required");
+      throw new Error("Jmemory API key is required");
     }
     if (typeof this.apiKey !== "string") {
-      throw new Error("Mem0 API key must be a string");
+      throw new Error("Jmemory API key must be a string");
     }
     if (this.apiKey.trim() === "") {
-      throw new Error("Mem0 API key cannot be empty");
+      throw new Error("Jmemory API key cannot be empty");
     }
   }
 
@@ -77,7 +63,7 @@ export default class MemoryClient {
 
   constructor(options: ClientOptions) {
     this.apiKey = options.apiKey;
-    this.host = options.host || "https://api.mem0.ai";
+    this.host = options.host || "https://api.jmemory.ai";
     this.organizationName = options.organizationName || null;
     this.projectName = options.projectName || null;
     this.organizationId = options.organizationId || null;

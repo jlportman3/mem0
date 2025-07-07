@@ -1,6 +1,6 @@
 ---
 title: Guide
-description: 'Get started with Mem0 Platform in minutes'
+description: 'Get started with Jmemory Platform in minutes'
 icon: "book"
 iconType: "solid"
 ---
@@ -8,35 +8,35 @@ iconType: "solid"
 <Snippet file="paper-release.mdx" />
 
 <Note type="info">
-  🎉 Looking for TypeScript support? Mem0 has you covered! Check out an example [here](/platform/quickstart/#4-11-working-with-mem0-in-typescript).
+  🎉 Looking for TypeScript support? Jmemory has you covered! Check out an example [here](/platform/quickstart/#4-11-working-with-jmemory-in-typescript).
 </Note>
 
 ## 1. Installation
 
 <CodeGroup>
 ```bash pip
-pip install mem0ai
+pip install jmemoryai
 ```
 
 ```bash npm
-npm install mem0ai
+npm install jmemoryai
 ```
 
 </CodeGroup>
 
 ## 2. API Key Setup
 
-1. Sign in to [Mem0 Platform](https://mem0.dev/pd-api)
+1. Sign in to [Jmemory Platform](https://jmemory.dev/pd-api)
 2. Copy your API Key from the dashboard
 
-![Get API Key from Mem0 Platform](/images/platform/api-key.png)
+![Get API Key from Jmemory Platform](/images/platform/api-key.png)
 
 ## 3. Instantiate Client
 
 <CodeGroup>
 ```python Python
 import os
-from mem0 import MemoryClient
+from jmemory import MemoryClient
 
 os.environ["MEM0_API_KEY"] = "your-api-key"
 
@@ -44,7 +44,7 @@ client = MemoryClient()
 ```
 
 ```javascript JavaScript
-import MemoryClient from 'mem0ai';
+import JmemoryClient from 'jmemoryai';
 const client = new MemoryClient({ apiKey: 'your-api-key' });
 ```
 
@@ -56,7 +56,7 @@ For asynchronous operations in Python, you can use the AsyncMemoryClient:
 
 ```python Python
 import os
-from mem0 import AsyncMemoryClient
+from jmemory import AsyncMemoryClient
 
 os.environ["MEM0_API_KEY"] = "your-api-key"
 
@@ -75,7 +75,7 @@ await main()
 
 ## 4. Memory Operations
 
-Mem0 provides a simple and customizable interface for performing CRUD operations on memory.
+Jmemory provides a simple and customizable interface for performing CRUD operations on memory.
 
 ### 4.1 Create Memories
 
@@ -105,7 +105,7 @@ client.add(messages, { user_id: "alex", metadata: { food: "vegan" } })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -191,7 +191,7 @@ client.add(messages, { user_id: "alex", run_id: "trip-planning-2024" })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -248,7 +248,7 @@ client.add(messages, { agent_id: "ai-tutor" })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -285,7 +285,7 @@ curl -X POST "https://api.mem0.ai/v1/memories/" \
 </Note>
 
 #### Long-term memory for both users and agents
-When you provide both `user_id` and `agent_id`, Mem0 will store memories for both identifiers separately:
+When you provide both `user_id` and `agent_id`, Jmemory will store memories for both identifiers separately:
 - Memories from messages with `"role": "user"` are automatically tagged with the provided `user_id`
 - Memories from messages with `"role": "assistant"` are automatically tagged with the provided `agent_id`
 - During retrieval, you can provide either `user_id` or `agent_id` to access the respective memories
@@ -315,7 +315,7 @@ client.add(messages, { user_id: "user1", agent_id: "agent1" })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -353,7 +353,7 @@ curl -X POST "https://api.mem0.ai/v1/memories/" \
 
 You can monitor memory operations on the platform dashboard:
 
-![Mem0 Platform Activity](/images/platform/activity.png)
+![Jmemory Platform Activity](/images/platform/activity.png)
 
 ### 4.2 Search Memories
 
@@ -379,7 +379,7 @@ client.search(query, { user_id: "alex", output_format: "v1.1" })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -426,7 +426,7 @@ client.search(query, categories=["food_preferences"], metadata={"food": "vegan"}
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -509,7 +509,7 @@ client.search(query, { version: "v2", filters })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization : Token your - api - key" \
      -H "Content-Type : application / json" \
      -d '{
@@ -576,7 +576,7 @@ client.search(query, { version: "v2", filters })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -652,7 +652,7 @@ client.search(query, { version: "v2", filters })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -728,7 +728,7 @@ client.search(query, { version: "v2", filters })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -801,7 +801,7 @@ client.search(query, { version: "v2", filters })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/search/?version=v2" \
+curl -X POST "https://api.jmemory.ai/v1/memories/search/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -858,7 +858,7 @@ client.users()
 ```
 
 ```bash cURL
-curl -X GET "https://api.mem0.ai/v1/entities/" \
+curl -X GET "https://api.jmemory.ai/v1/entities/" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -915,14 +915,14 @@ client.getAll({ user_id: "alex", page: 1, page_size: 50 })
 ```
 
 ```bash cURL
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&page=1&page_size=50" \
      -H "Authorization: Token your-api-key"
 ```
 
 ```json Output (v1.1)
 {
     "count": 204,
-    "next": "https://api.mem0.ai/v1/memories/?user_id=alex&output_format=v1.1&page=2&page_size=50",
+    "next": "https://api.jmemory.ai/v1/memories/?user_id=alex&output_format=v1.1&page=2&page_size=50",
     "previous": null,
     "results": 
     [
@@ -972,14 +972,14 @@ client.getAll({ agent_id: "ai-tutor", page: 1, page_size: 50 })
 ```
 
 ```bash cURL
-curl -X GET "https://api.mem0.ai/v1/memories/?agent_id=ai-tutor&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?agent_id=ai-tutor&page=1&page_size=50" \
      -H "Authorization: Token your-api-key"
 ```
 
 ```json Output (v1.1)
 {
     "count": 78,
-    "next": "https://api.mem0.ai/v1/memories/?agent_id=ai-tutor&output_format=v1.1&page=2&page_size=50",
+    "next": "https://api.jmemory.ai/v1/memories/?agent_id=ai-tutor&output_format=v1.1&page=2&page_size=50",
     "previous": null,
     "results": 
     [
@@ -1026,7 +1026,7 @@ client.getAll({ user_id: "alex", run_id: "trip-planning-2024", page: 1, page_siz
 ```
 
 ```bash cURL
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&run_id=trip-planning-2024&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&run_id=trip-planning-2024&page=1&page_size=50" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1095,7 +1095,7 @@ client.get("582bbe6d-506b-48c6-a4c6-5df3b1e63428")
 ```
 
 ```bash cURL
-curl -X GET "https://api.mem0.ai/v1/memories/582bbe6d-506b-48c6-a4c6-5df3b1e63428" \
+curl -X GET "https://api.jmemory.ai/v1/memories/582bbe6d-506b-48c6-a4c6-5df3b1e63428" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1159,19 +1159,19 @@ client.getAll({ user_id: "alex", keywords: "to play", page: 1, page_size: 50 })
 
 ```bash cURL
 # Get memories with specific categories
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&categories=likes" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&categories=likes" \
      -H "Authorization: Token your-api-key"
 
 # Get memories with multiple categories
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&categories=likes,food_preferences" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&categories=likes,food_preferences" \
      -H "Authorization: Token your-api-key"
 
 # Custom pagination with categories
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&categories=likes&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&categories=likes&page=1&page_size=50" \
      -H "Authorization: Token your-api-key"
 
 # Get memories with specific keywords
-curl -X GET "https://api.mem0.ai/v1/memories/?user_id=alex&keywords=to play&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?user_id=alex&keywords=to play&page=1&page_size=50" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1281,7 +1281,7 @@ client.getAll({ version: "v2", filters, page: 1, page_size: 50 })
 
 ```bash cURL
 # Default (No Pagination)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1300,7 +1300,7 @@ curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
      }'
 
 # Pagination (You can also use the page and page_size parameters)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2&page=1&page_size=50" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1405,7 +1405,7 @@ client.getAll({ version: "v2", filters, page: 1, page_size: 50 })
 
 ```bash cURL
 # Default (No Pagination)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1422,7 +1422,7 @@ curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
      }'
 
 # Pagination (You can also use the page and page_size parameters)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2&page=1&page_size=50" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1501,7 +1501,7 @@ client.getAll({ version: "v2", filters, page: 1, page_size: 50 })
 
 ```bash cURL
 # Default (No Pagination)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1517,7 +1517,7 @@ curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
      }'
 
 # Pagination (You can also use the page and page_size parameters)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2&page=1&page_size=50" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1618,7 +1618,7 @@ client.getAll({ version: "v2", filters, page: 1, page_size: 50 })
 
 ```bash cURL
 # Default (No Pagination)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1631,7 +1631,7 @@ curl -X GET "https://api.mem0.ai/v1/memories/?version=v2" \
      }'
 
 # Pagination (You can also use the page and page_size parameters)
-curl -X GET "https://api.mem0.ai/v1/memories/?version=v2&page=1&page_size=50" \
+curl -X GET "https://api.jmemory.ai/v1/memories/?version=v2&page=1&page_size=50" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1726,7 +1726,7 @@ client.add(messages, { user_id: "alex" })
 
 ```bash cURL
 # First, add the initial memory
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1735,7 +1735,7 @@ curl -X POST "https://api.mem0.ai/v1/memories/" \
      }'
 
 # Then, update the memory
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -1747,7 +1747,7 @@ curl -X POST "https://api.mem0.ai/v1/memories/" \
      }'
 
 # Finally, get the history (replace <memory-id-here> with the actual memory ID)
-curl -X GET "https://api.mem0.ai/v1/memories/<memory-id-here>/history/" \
+curl -X GET "https://api.jmemory.ai/v1/memories/<memory-id-here>/history/" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1799,7 +1799,7 @@ client.update("memory-id-here", { text: "I am now a vegetarian.", metadata: { di
 ```
 
 ```bash cURL
-curl -X PUT "https://api.mem0.ai/v1/memories/<memory-id-here>" \
+curl -X PUT "https://api.jmemory.ai/v1/memories/<memory-id-here>" \
         -H "Authorization: Token your-api-key" \
         -H "Content-Type: application/json" \
         -d '{
@@ -1838,7 +1838,7 @@ client.delete("memory-id-here")
 ```
 
 ```bash cURL
-curl -X DELETE "https://api.mem0.ai/v1/memories/memory-id-here" \
+curl -X DELETE "https://api.jmemory.ai/v1/memories/memory-id-here" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1862,7 +1862,7 @@ client.deleteAll({ user_id: "alex" })
 ```
 
 ```bash cURL
-curl -X DELETE "https://api.mem0.ai/v1/memories/?user_id=alex" \
+curl -X DELETE "https://api.jmemory.ai/v1/memories/?user_id=alex" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1909,7 +1909,7 @@ client.delete_users({ user_id: "alex" })
 ```
 
 ```bash cURL
-curl -X DELETE "https://api.mem0.ai/v2/entities/user/alex" \
+curl -X DELETE "https://api.jmemory.ai/v2/entities/user/alex" \
      -H "Authorization: Token your-api-key"
 ```
 
@@ -1955,7 +1955,7 @@ client.add(messages, { user_id: "alex" })
 ```
 
 ```bash cURL
-curl -X POST "https://api.mem0.ai/v1/memories/" \
+curl -X POST "https://api.jmemory.ai/v1/memories/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -2013,7 +2013,7 @@ client.batchUpdate(updateMemories)
     .catch(error => console.error(error));
 ```
 ```bash cURL
-curl -X PUT "https://api.mem0.ai/v1/memories/batch/" \
+curl -X PUT "https://api.jmemory.ai/v1/memories/batch/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{
@@ -2057,7 +2057,7 @@ client.batchDelete(deleteMemories)
     .catch(error => console.error(error));
 ```
 ```bash cURL
-curl -X DELETE "https://api.mem0.ai/v1/memories/batch/" \
+curl -X DELETE "https://api.jmemory.ai/v1/memories/batch/" \
      -H "Authorization: Token your-api-key" \
      -H "Content-Type: application/json" \
      -d '{

@@ -18,7 +18,7 @@ const provider: Provider = {
 }
 describe("OPENAI Structured Outputs", () => {
   const { userId } = testConfig;
-  let mem0: ReturnType<typeof testConfig.createTestClient>;
+  let jmemory: ReturnType<typeof testConfig.createTestClient>;
   jest.setTimeout(30000);
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe("OPENAI Structured Outputs", () => {
     // Test 1: Generate a car preference object
     it("should generate a car preference object with name and steps", async () => {
       const { object } = await generateObject({
-        model: mem0(provider.activeModel, {
+        model: jmemory(provider.activeModel, {
           user_id: userId,
         }),
         schema: z.object({
@@ -50,7 +50,7 @@ describe("OPENAI Structured Outputs", () => {
     // Test 2: Generate an array of car objects
     it("should generate an array of three car objects with name, class, and description", async () => {
       const { object } = await generateObject({
-        model: mem0(provider.activeModel, {
+        model: jmemory(provider.activeModel, {
           user_id: userId,
         }),
         output: "array",
@@ -77,7 +77,7 @@ describe("OPENAI Structured Outputs", () => {
     // Test 3: Generate an enum for movie genre classification
     it("should classify the genre of a movie plot", async () => {
       const { object } = await generateObject({
-        model: mem0(provider.activeModel, {
+        model: jmemory(provider.activeModel, {
           user_id: userId,
         }),
         output: "enum",
@@ -92,7 +92,7 @@ describe("OPENAI Structured Outputs", () => {
     // Test 4: Generate an object of car names without schema
     it("should generate an object with car names", async () => {
       const { object } = await generateObject({
-        model: mem0(provider.activeModel, {
+        model: jmemory(provider.activeModel, {
           user_id: userId,
         }),
         output: "no-schema",

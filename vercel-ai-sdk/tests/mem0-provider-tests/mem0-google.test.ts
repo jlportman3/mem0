@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { createMem0 } from "../../src";
+import { createJmemory } from "../../src";
 import { generateText, LanguageModelV1Prompt } from "ai";
 import { testConfig } from "../../config/test-config";
 
@@ -9,10 +9,10 @@ describe("GOOGLE MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(50000);
   
-  let mem0: any;
+  let jmemory: any;
 
   beforeEach(() => {
-    mem0 = createMem0({
+    jmemory = createJmemory({
       provider: "google",
       apiKey: process.env.GOOGLE_API_KEY,
       mem0Config: {
@@ -34,7 +34,7 @@ describe("GOOGLE MEM0 Tests", () => {
 
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("gemini-2.5-pro-preview-05-06"),
+      model: jmemory("gemini-2.5-pro-preview-05-06"),
       messages: messages
     });
 
@@ -48,7 +48,7 @@ describe("GOOGLE MEM0 Tests", () => {
 
     const { text } = await generateText({
       // @ts-ignore
-      model: mem0("gemini-2.5-pro-preview-05-06"),
+      model: jmemory("gemini-2.5-pro-preview-05-06"),
       prompt: prompt
     });
 

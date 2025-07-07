@@ -3,8 +3,8 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from mem0.configs.base import MemoryConfig
-from mem0.memory.main import Memory
+from jmemory.configs.base import MemoryConfig
+from jmemory.memory.main import Memory
 
 
 @pytest.fixture(autouse=True)
@@ -18,10 +18,10 @@ def mock_openai():
 @pytest.fixture
 def memory_instance():
     with (
-        patch("mem0.utils.factory.EmbedderFactory") as mock_embedder,
-        patch("mem0.memory.main.VectorStoreFactory") as mock_vector_store,
-        patch("mem0.utils.factory.LlmFactory") as mock_llm,
-        patch("mem0.memory.graph_memory.MemoryGraph"),
+        patch("jmemory.utils.factory.EmbedderFactory") as mock_embedder,
+        patch("jmemory.memory.main.VectorStoreFactory") as mock_vector_store,
+        patch("jmemory.utils.factory.LlmFactory") as mock_llm,
+        patch("jmemory.memory.graph_memory.MemoryGraph"),
     ):
         mock_embedder.create.return_value = Mock()
         mock_vector_store.create.return_value = Mock()
@@ -36,10 +36,10 @@ def memory_instance():
 @pytest.fixture
 def memory_custom_instance():
     with (
-        patch("mem0.utils.factory.EmbedderFactory") as mock_embedder,
-        patch("mem0.memory.main.VectorStoreFactory") as mock_vector_store,
-        patch("mem0.utils.factory.LlmFactory") as mock_llm,
-        patch("mem0.memory.graph_memory.MemoryGraph"),
+        patch("jmemory.utils.factory.EmbedderFactory") as mock_embedder,
+        patch("jmemory.memory.main.VectorStoreFactory") as mock_vector_store,
+        patch("jmemory.utils.factory.LlmFactory") as mock_llm,
+        patch("jmemory.memory.graph_memory.MemoryGraph"),
     ):
         mock_embedder.create.return_value = Mock()
         mock_vector_store.create.return_value = Mock()
@@ -250,15 +250,15 @@ def test_get_all(memory_instance, version, enable_graph, expected_result):
 
 def test_custom_prompts(memory_custom_instance):
     messages = [{"role": "user", "content": "Test message"}]
-    from mem0.embeddings.mock import MockEmbeddings
+    from jmemory.embeddings.mock import MockEmbeddings
 
     memory_custom_instance.llm.generate_response = Mock()
     memory_custom_instance.llm.generate_response.return_value = '{"facts": ["fact1", "fact2"]}'
     memory_custom_instance.embedding_model = MockEmbeddings()
 
-    with patch("mem0.memory.main.parse_messages", return_value="Test message") as mock_parse_messages:
+    with patch("jmemory.memory.main.parse_messages", return_value="Test message") as mock_parse_messages:
         with patch(
-            "mem0.memory.main.get_update_memory_messages", return_value="custom update memory prompt"
+            "jmemory.memory.main.get_update_memory_messages", return_value="custom update memory prompt"
         ) as mock_get_update_memory_messages:
             memory_custom_instance.add(messages=messages, user_id="test_user")
 

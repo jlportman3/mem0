@@ -1,6 +1,6 @@
-# Mem0 REST API Server
+# Jmemory REST API Server
 
-Mem0 provides a REST API server (written using FastAPI). Users can perform all operations through REST endpoints. The API also includes OpenAPI documentation, accessible at `/docs` when the server is running.
+Jmemory provides a REST API server (written using FastAPI). Users can perform all operations through REST endpoints. The API also includes OpenAPI documentation, accessible at `/docs` when the server is running.
 
 ## Features
 
@@ -14,4 +14,4 @@ Mem0 provides a REST API server (written using FastAPI). Users can perform all o
 
 ## Running the server
 
-Follow the instructions in the [docs](https://docs.mem0.ai/open-source/features/rest-api) to run the server.
+Follow the instructions in the [docs](https://docs.jmemory.ai/open-source/features/rest-api) to run the server.

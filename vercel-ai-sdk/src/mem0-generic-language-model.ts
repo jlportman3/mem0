@@ -5,35 +5,37 @@ import {
   LanguageModelV1Message,
 } from "@ai-sdk/provider";
 
-import { Mem0ChatConfig, Mem0ChatModelId, Mem0ChatSettings, Mem0ConfigSettings, Mem0StreamResponse } from "./mem0-types";
-import { Mem0ClassSelector } from "./mem0-provider-selector";
-import { Mem0ProviderSettings } from "./mem0-provider";
-import { addMemories, getMemories, retrieveMemories } from "./mem0-utils";
+import {
+  JmemoryChatConfig, JmemoryChatModelId, JmemoryChatSettings, JmemoryConfigSettings, JmemoryStreamResponse
+} from "./jmemory-types";
+import { JmemoryClassSelector } from "./jmemory-provider-selector";
+import { JmemoryProviderSettings } from "./jmemory-provider";
+import { addMemories, getMemories, retrieveMemories } from "./jmemory-utils";
 
 const generateRandomId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-export class Mem0GenericLanguageModel implements LanguageModelV1 {
+export class JmemoryGenericLanguageModel implements LanguageModelV1 {
   readonly specificationVersion = "v1";
   readonly defaultObjectGenerationMode = "json";
   readonly supportsImageUrls = false;
 
   constructor(
-    public readonly modelId: Mem0ChatModelId,
-    public readonly settings: Mem0ChatSettings,
-    public readonly config: Mem0ChatConfig,
-    public readonly provider_config?: Mem0ProviderSettings
+    public readonly modelId: JmemoryChatModelId,
+    public readonly settings: JmemoryChatSettings,
+    public readonly config: JmemoryChatConfig,
+    public readonly provider_config?: JmemoryProviderSettings
   ) {
     this.provider = config.provider ?? "openai";
   }
 
   provider: string;
 
-  private async processMemories(messagesPrompts: LanguageModelV1Message[], mem0Config: Mem0ConfigSettings) {
+  private async processMemories(messagesPrompts: LanguageModelV1Message[], jmemoryConfig: JmemoryConfigSettings) {
     try {
     // Add New Memories
-    addMemories(messagesPrompts, mem0Config).then((res) => {
+    addMemories(messagesPrompts, jmemoryConfig).then((res) => {
       return res;
     }).catch((e) => {
       console.error("Error while adding memories");
@@ -41,11 +43,11 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
     });
 
     // Get Memories
-    let memories = await getMemories(messagesPrompts, mem0Config);
+    let memories = await getMemories(messagesPrompts, jmemoryConfig);
 
     const mySystemPrompt = "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
 
-    const isGraphEnabled = mem0Config?.enable_graph;
+    const isGraphEnabled = jmemoryConfig?.enable_graph;
   
     let memoriesText = "";
     let memoriesText2 = "";
@@ -100,26 +102,26 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
   async doGenerate(options: LanguageModelV1CallOptions): Promise<Awaited<ReturnType<LanguageModelV1['doGenerate']>>> {
     try {   
       const provider = this.config.provider;
-      const mem0_api_key = this.config.mem0ApiKey;
+      const jmemory_api_key = this.config.jmemoryApiKey;
       
-      const settings: Mem0ProviderSettings = {
+      const settings: JmemoryProviderSettings = {
         provider: provider,
-        mem0ApiKey: mem0_api_key,
+        jmemoryApiKey: jmemory_api_key,
         apiKey: this.config.apiKey,
       }
 
-      const mem0Config: Mem0ConfigSettings = {
-        mem0ApiKey: mem0_api_key,
-        ...this.config.mem0Config,
+      const jmemoryConfig: JmemoryConfigSettings = {
+        jmemoryApiKey: jmemory_api_key,
+        ...this.config.jmemoryConfig,
         ...this.settings,
       }
 
-      const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
+      const selector = new JmemoryClassSelector(this.modelId, settings, this.provider_config);
       
       let messagesPrompts = options.prompt;
       
       // Process memories and update prompts
-      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
+      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, jmemoryConfig);
       
       const model = selector.createProvider();
 
@@ -139,14 +141,14 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
       // Add a combined source with all memories
       if (Array.isArray(memories) && memories?.length > 0) {
         sources.push({
-          title: "Mem0 Memories",
+          title: "Jmemory Memories",
           sourceType: "url",
-          id: "mem0-" + generateRandomId(),
-          url: "https://app.mem0.ai",
+          id: "jmemory-" + generateRandomId(),
+          url: "https://app.jmemory.ai",
           providerMetadata: {
-            mem0: {
+            jmemory: {
               memories: memories,
-              memoriesText: memories?.map((memory: any) => memory?.memory).join("\n\n")
+              jmemory: { memories: memories, memoriesText: memories?.map((memory: any) => memory?.memory).join("\n\n") } }
             }
           }
         });
@@ -156,8 +158,8 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
           sources.push({
             title: memory.title || "Memory",
             sourceType: "url",
-            id: "mem0-memory-" + generateRandomId(),
-            url: "https://app.mem0.ai",
+            id: "jmemory-memory-" + generateRandomId(),
+            url: "https://app.jmemory.ai",
             providerMetadata: {
               mem0: {
                 memory: memory,
@@ -182,27 +184,27 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
   async doStream(options: LanguageModelV1CallOptions): Promise<Awaited<ReturnType<LanguageModelV1['doStream']>>> {
     try {
       const provider = this.config.provider;
-      const mem0_api_key = this.config.mem0ApiKey;
+      const jmemory_api_key = this.config.jmemoryApiKey;
       
-      const settings: Mem0ProviderSettings = {
+      const settings: JmemoryProviderSettings = {
         provider: provider,
-        mem0ApiKey: mem0_api_key,
+        jmemoryApiKey: jmemory_api_key,
         apiKey: this.config.apiKey,
         modelType: this.config.modelType,
       }
 
-      const mem0Config: Mem0ConfigSettings = {
-        mem0ApiKey: mem0_api_key,
-        ...this.config.mem0Config,
+      const jmemoryConfig: JmemoryConfigSettings = {
+        jmemoryApiKey: jmemory_api_key,
+        ...this.config.jmemoryConfig,
         ...this.settings,
       }
 
-      const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
+      const selector = new JmemoryClassSelector(this.modelId, settings, this.provider_config);
       
       let messagesPrompts = options.prompt;
       
       // Process memories and update prompts
-      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
+      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, jmemoryConfig);
 
       const model = selector.createProvider();
 
@@ -229,14 +231,14 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
               controller.enqueue({
                 type: 'source',
                 source: {
-                  title: "Mem0 Memories",
+                  title: "Jmemory Memories",
                   sourceType: "url",
-                  id: "mem0-" + generateRandomId(),
-                  url: "https://app.mem0.ai",
+                  id: "jmemory-" + generateRandomId(),
+                  url: "https://app.jmemory.ai",
                   providerMetadata: {
                     mem0: {
                       memories: memories,
-                      memoriesText: memories?.map((memory: any) => memory?.memory).join("\n\n")
+                      jmemory: { memories: memories, memoriesText: memories?.map((memory: any) => memory?.memory).join("\n\n") } }
                     }
                   }
                 }
@@ -249,8 +251,8 @@ export class Mem0GenericLanguageModel implements LanguageModelV1 {
                   source: {
                     title: memory?.title || "Memory",
                     sourceType: "url",
-                    id: "mem0-memory-" + generateRandomId(),
-                    url: "https://app.mem0.ai",
+                    id: "jmemory-memory-" + generateRandomId(),
+                    url: "https://app.jmemory.ai",
                     providerMetadata: {
                       mem0: {
                         memory: memory,

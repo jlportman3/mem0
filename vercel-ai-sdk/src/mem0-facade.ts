@@ -1,14 +1,14 @@
 import { withoutTrailingSlash } from '@ai-sdk/provider-utils'
 
-import { Mem0GenericLanguageModel } from './mem0-generic-language-model'
-import { Mem0ChatModelId, Mem0ChatSettings } from './mem0-types'
-import { Mem0ProviderSettings } from './mem0-provider'
+import { JmemoryGenericLanguageModel } from './jmemory-generic-language-model'
+import { JmemoryChatModelId, JmemoryChatSettings } from './jmemory-types'
+import { JmemoryProviderSettings } from './jmemory-provider'
 
-export class Mem0 {
+export class Jmemory {
   readonly baseURL: string
   readonly headers?: any
 
-  constructor(options: Mem0ProviderSettings = {
+  constructor(options: JmemoryProviderSettings = {
     provider: 'openai',
   }) {
     this.baseURL =
@@ -24,16 +24,16 @@ export class Mem0 {
     }
   }
 
-  chat(modelId: Mem0ChatModelId, settings: Mem0ChatSettings = {}) {
-    return new Mem0GenericLanguageModel(modelId, settings, {
+  chat(modelId: JmemoryChatModelId, settings: JmemoryChatSettings = {}) {
+    return new JmemoryGenericLanguageModel(modelId, settings, {
       provider: 'openai',
       modelType: 'chat',
       ...this.baseConfig,
     })
   }
 
-  completion(modelId: Mem0ChatModelId, settings: Mem0ChatSettings = {}) {
-    return new Mem0GenericLanguageModel(modelId, settings, {
+  completion(modelId: JmemoryChatModelId, settings: JmemoryChatSettings = {}) {
+    return new JmemoryGenericLanguageModel(modelId, settings, {
       provider: 'openai',
       modelType: 'completion',
       ...this.baseConfig,

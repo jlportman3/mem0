@@ -1,6 +1,6 @@
-# Mem0 Assistant Chrome Extension
+# Jmemory Assistant Chrome Extension
 
-A powerful Chrome extension that combines AI chat with your personal knowledge base through mem0. Get instant, personalized answers about video content while leveraging your own knowledge and memories - all without leaving the page.
+A powerful Chrome extension that combines AI chat with your personal knowledge base through jmemory. Get instant, personalized answers about video content while leveraging your own knowledge and memories - all without leaving the page.
 
 ## Development
 
@@ -22,7 +22,7 @@ A powerful Chrome extension that combines AI chat with your personal knowledge b
 ## Features
 
 - AI-powered chat interface directly in YouTube
-- Memory capabilities powered by Mem0
+- Memory capabilities powered by Jmemory
 - Dark mode support
 - Customizable options
 
@@ -36,7 +36,7 @@ A powerful Chrome extension that combines AI chat with your personal knowledge b
 
 - youtube.com
 - openai.com
-- mem0.ai
+- jmemory.ai
 
 ## Features
 
@@ -44,7 +44,7 @@ A powerful Chrome extension that combines AI chat with your personal knowledge b
 - **Seamless Integration**: Chat interface sits alongside YouTube's native UI
 - **OpenAI-Powered**: Uses GPT models for intelligent responses
 - **Customizable**: Configure model settings, appearance, and behavior
-- **Future mem0 Integration**: Personalized responses based on your knowledge (coming soon)
+- **Future Jmemory Integration**: Personalized responses based on your knowledge (coming soon)
 
 ## Installation
 
